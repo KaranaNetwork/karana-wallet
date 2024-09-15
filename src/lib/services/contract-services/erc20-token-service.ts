@@ -55,12 +55,6 @@ export default class ERC20TokenService {
 
   async approve(spender: string, amount: string) {
     const data = await this.contract.methods.approve(spender, amount);
-    const gasLimit = await this.web3.eth.estimateGas({
-      from: this.account.address,
-      to: this.contractAddress,
-      data,
-    });
-    console.log('gasLimit', gasLimit);
 
     const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = await this.web3.eth.calculateFeeData();
 
@@ -68,7 +62,6 @@ export default class ERC20TokenService {
       {
         from: this.account.address,
         to: this.contractAddress,
-        gasLimit: gasLimit.toString(16),
         maxFeePerGas: (maxFeePerGas as bigint).toString(16),
         maxPriorityFeePerGas: (maxPriorityFeePerGas as bigint).toString(16),
         data,

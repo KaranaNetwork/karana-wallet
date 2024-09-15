@@ -254,12 +254,6 @@ export default class OmniverseTransformerService {
 
   async convertToOmniverse(amount: string) {
     const data = await this.contract.methods.convertToOmniverse(this.account.publicKey32, amount);
-    const gasLimit = await this.web3.eth.estimateGas({
-      from: this.account.address,
-      to: this.contractAddress,
-      data,
-    });
-    console.log('gasLimit', gasLimit);
 
     const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = await this.web3.eth.calculateFeeData();
 
@@ -267,7 +261,6 @@ export default class OmniverseTransformerService {
       {
         from: this.account.address,
         to: this.contractAddress,
-        gasLimit: gasLimit.toString(16),
         maxFeePerGas: (maxFeePerGas as bigint).toString(16),
         maxPriorityFeePerGas: (maxPriorityFeePerGas as bigint).toString(16),
         data,
@@ -307,20 +300,12 @@ export default class OmniverseTransformerService {
     console.log('tx:', tx);
     const data = await this.contract.methods.convertToLocal(tx, this.account.publicKey);
 
-    const gasLimit = await this.web3.eth.estimateGas({
-      from: this.account.address,
-      to: this.contractAddress,
-      data,
-    });
-    console.log('gasLimit', gasLimit);
-
     const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = await this.web3.eth.calculateFeeData();
 
     const params = [
       {
         from: this.account.address,
         to: this.contractAddress,
-        gasLimit: gasLimit.toString(16),
         maxFeePerGas: (maxFeePerGas as bigint).toString(16),
         maxPriorityFeePerGas: (maxPriorityFeePerGas as bigint).toString(16),
         data,
@@ -332,18 +317,11 @@ export default class OmniverseTransformerService {
 
   async claim(txid: string) {
     const data = await this.contract.methods.claim(txid);
-    const gasLimit = await this.web3.eth.estimateGas({
-      from: this.account.address,
-      to: this.contractAddress,
-      data,
-    });
-    //console.log('gasLimit', gasLimit);
     const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = await this.web3.eth.calculateFeeData();
     const params = [
       {
         from: this.account.address,
         to: this.contractAddress,
-        gasLimit: gasLimit.toString(16),
         maxFeePerGas: (maxFeePerGas as bigint).toString(16),
         maxPriorityFeePerGas: (maxPriorityFeePerGas as bigint).toString(16),
         data,
@@ -354,12 +332,6 @@ export default class OmniverseTransformerService {
 
   async claimAll() {
     const data = await this.contract.methods.claimAll();
-    const gasLimit = await this.web3.eth.estimateGas({
-      from: this.account.address,
-      to: this.contractAddress,
-      data,
-    });
-    console.log('gasLimit', gasLimit);
 
     const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = await this.web3.eth.calculateFeeData();
 
@@ -367,7 +339,6 @@ export default class OmniverseTransformerService {
       {
         from: this.account.address,
         to: this.contractAddress,
-        gasLimit: gasLimit.toString(16),
         maxFeePerGas: (maxFeePerGas as bigint).toString(16),
         maxPriorityFeePerGas: (maxPriorityFeePerGas as bigint).toString(16),
         data,
