@@ -28,6 +28,10 @@ class Methods {
     return (await this.contractRequest.methodCall('decimals')) as number;
   }
 
+  public async allowance(owner: string, spender: string) {
+    return (await this.contractRequest.methodCall('decimals', [owner, spender])) as bigint;
+  }
+
   public async approve(spender: string, amount: string) {
     return await this.contractRequest.methodCall('approve', [spender, amount], {
       call: 'encodeABI',

@@ -54,6 +54,10 @@ export default class ERC20TokenService {
   }
 
   async approve(spender: string, amount: string) {
+    const allowance = await this.contract.methods.allowance(this.account.address, this.contractAddress);
+    if (allowance >= BigInt(amount)) {
+      return;
+    }
     const data = await this.contract.methods.approve(spender, amount);
 
     const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = await this.web3.eth.calculateFeeData();
