@@ -11,7 +11,7 @@ export default class NetworkService {
         url = `https://sepolia.arbiscan.io/tx/${value}`;
         break;
       case 'BITCOIN_LOCAL':
-        url = `http://localhost:5001/tx/${value}`;
+        url = `http://47.254.40.186:5001/tx/${value}`;
         break;
     }
     return url;

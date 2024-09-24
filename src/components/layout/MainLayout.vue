@@ -29,7 +29,7 @@
         <slot></slot>
       </a-layout-content>
     </a-layout>
-    <connect-modal v-model:open="store.isShowConnect" z-index="10000"></connect-modal>
+    <connect-modal v-model:open="store.isShowConnect" :z-index="10000"></connect-modal>
   </a-layout>
 </template>
 
@@ -87,10 +87,10 @@ const jump: MenuClickEventHandler = function (data: MenuInfo) {
 
 onMounted(() => {
   state.setSelectedKey(route.path);
-  if (state.openKeys.length == 0) {
+  if (state.selectedKeys.length == 0) {
     state.items.forEach((item) => {
       if (route.path.startsWith(item.key + '/')) {
-        state.openKeys.push(item.key);
+        state.selectedKeys.push(item.key);
       }
     });
   }

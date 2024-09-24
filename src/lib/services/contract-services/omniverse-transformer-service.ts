@@ -253,7 +253,7 @@ export default class OmniverseTransformerService {
   }
 
   async convertToOmniverse(amount: string) {
-    const data = await this.contract.methods.convertToOmniverse(this.account.publicKey32, amount);
+    const data = await this.contract.methods.convertToOmniverse(this.account.publicKey, amount);
     const gasLimit = await this.web3.eth.estimateGas({
       from: this.account.address,
       to: this.contractAddress,
@@ -331,6 +331,7 @@ export default class OmniverseTransformerService {
   }
 
   async claim(txid: string) {
+    console.log("txid", txid)
     const data = await this.contract.methods.claim(txid);
     const gasLimit = await this.web3.eth.estimateGas({
       from: this.account.address,

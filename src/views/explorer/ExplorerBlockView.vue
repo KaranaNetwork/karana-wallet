@@ -49,7 +49,7 @@
                       <copy-button :text="_.get(tx, 'txId')"></copy-button>
                     </div>
                     <div>
-                      <div>gasFee: {{ _.get(tx, 'gasFee', 0) }}</div>
+                      <div>gasFee: {{ BalanceService.humanLize(_.get(tx, 'gasFee', 0) ?? 0) }}</div>
                       <div>
                         {{ timeUtil.iso(_.get(tx, 'txTimestamp', 0) * 1000) }}
                       </div>
@@ -72,6 +72,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import timeUtil from '@/lib/utils/time';
 import request from '@/lib/request/request';
+import BalanceService from '@/lib/services/balance-service';
 
 const route = useRoute();
 const router = useRouter();

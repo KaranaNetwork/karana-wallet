@@ -1,9 +1,12 @@
 export default class Config {
-  public static readonly name = '';
-  public static readonly rpcUrl = '';
-  public static readonly apiUrl = '';
-  public static readonly cdnUrl = '';
-  public static readonly traceUrl = '';
-  public static readonly transformerUrl = '';
-  public static readonly networksUrl = '';
+  public static readonly name = 'dev.omnicoins.net';
+  public static readonly apiUrl = '/';
+  public static readonly rpcUrl = 'https://server.dev.omnicoins.net';
+  public static readonly traUrl = 'https://transformer.dev.omnicoins.net';
+  public static readonly cdnUrl = 'https://omniverse-metadata.s3.amazonaws.com';
+  public static readonly traceUrl = 'https://grpc.trace.karana.network/v1/traces';
+  public static readonly transformerUrl =
+    'https://omniverse-dev.s3.amazonaws.com/config/dev/transformer.json';
+  public static readonly networksUrl =
+    'https://omniverse-dev.s3.amazonaws.com/config/dev/networks.json';
 }

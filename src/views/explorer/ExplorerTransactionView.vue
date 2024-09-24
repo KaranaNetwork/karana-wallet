@@ -35,7 +35,7 @@
               <tr>
                 <td class="table-header">Transaction Fee:</td>
                 <td class="table-data">
-                  {{ _.get(transaction, 'gasFee') }}
+                  {{ BalanceService.humanLize(_.get(transaction, 'gasFee') ?? '0') }}
                 </td>
               </tr>
               <tr>
@@ -167,6 +167,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import hexUtil from '@/lib/utils/hex';
 import request from '@/lib/request/request';
+import BalanceService from '@/lib/services/balance-service';
 
 const route = useRoute();
 const txId = route.query.txId as string;

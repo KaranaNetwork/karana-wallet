@@ -3,7 +3,7 @@ import time from '@/lib/utils/time';
 import request, { type Options } from '@/lib/request/request';
 import { createModels } from '@/lib/models/model';
 import Network from '@/lib/models/server/network';
-import type { TransformerInfo } from '@/lib/models/server/transformer-info';
+//import type { TransformerInfo } from '@/lib/models/server/transformer-info';
 import type { ServerInfo } from '@/lib/models/server/server-info';
 import Config from '@/lib/config/config';
 
@@ -18,19 +18,19 @@ export default class ConfigService {
     return serverInfo;
   }
 
-  static async getTransformerInfo(options?: Options): Promise<TransformerInfo> {
-    let transformerInfo = store.transformerInfo;
-    if (!transformerInfo) {
-      const resp = await request.fetch(
-        Config.transformerUrl + '?v=' + time.currentTimestamp(),
-        options,
-      );
-      const data = await resp.json();
-      transformerInfo = data as TransformerInfo;
-      store.setTransformerInfo(transformerInfo);
-    }
-    return transformerInfo;
-  }
+  // static async getTransformerInfo(options?: Options): Promise<TransformerInfo> {
+  //   let transformerInfo = store.transformerInfo;
+  //   if (!transformerInfo) {
+  //     const resp = await request.fetch(
+  //       Config.transformerUrl + '?v=' + time.currentTimestamp(),
+  //       options,
+  //     );
+  //     const data = await resp.json();
+  //     transformerInfo = data as TransformerInfo;
+  //     store.setTransformerInfo(transformerInfo);
+  //   }
+  //   return transformerInfo;
+  // }
 
   static async getNetworks(options?: Options) {
     let networks = store.networks;

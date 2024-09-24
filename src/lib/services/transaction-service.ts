@@ -13,7 +13,7 @@ export default class TransactionService {
       name: string;
       totalSupply: string;
       price: string;
-      limit: string;
+      mintAmount: string;
       salt: string;
     },
     options?: Options,
@@ -23,7 +23,7 @@ export default class TransactionService {
       deployer: data.publicKey32,
       totalSupply: data.totalSupply,
       price: data.price,
-      limit: data.limit,
+      mintAmount: data.mintAmount,
       salt: data.salt,
     };
     const preDeployData = await request.rpc('preDeploy', [metadata], options);

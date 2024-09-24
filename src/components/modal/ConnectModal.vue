@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:open="open" with="800" :footer="null" :mask-closable="false" z-index="10000">
+  <a-modal v-model:open="open" with="800" :footer="null" :mask-closable="false" :z-index="10000">
     <h1>Connect your wallet</h1>
     <div class="connect-body">
       <div class="discovered-wallets">
@@ -65,7 +65,7 @@
           Request Permissions
         </a-button>
         <a-button v-if="account.step == 3" class="button-blue" @click="closeStep">
-          Connnect Successed
+          Connection successful
         </a-button>
       </div>
     </a-modal>

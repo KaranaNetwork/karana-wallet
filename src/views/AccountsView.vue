@@ -9,7 +9,7 @@
           <div class="chains-table">
             <div class="chains-row">
               <div class="header title-name">Chain Name</div>
-              <div class="header title-address">Actual Address</div>
+              <div class="header title-address">Local Address</div>
             </div>
             <div v-if="store.account" class="chains-row chains-row-data">
               <div class="cell chain-name">
@@ -67,7 +67,7 @@
         </div>
         <div class="body">
           <div class="name" style="margin-bottom: 10px">My Tokens</div>
-          <tokens-view v-if="store.account" :is-self="true" :account="store.account"></tokens-view>
+          <tokens-view v-if="store.account" :is-self="true"></tokens-view>
           <div style="margin-top: 10px">
             <a-button class="button-default" @click="showAll">show all</a-button>
           </div>
@@ -145,6 +145,7 @@ const changePage = async function (nextPage: number, nextPageSize: number = 10) 
   if (loading.value) {
     return;
   }
+  console.log('loading: ', loading.value);
   try {
     loading.value = true;
     const { data, totalNumber, numberPerPage } = await request.rpc('getLatestUserTransactions', [
@@ -153,11 +154,13 @@ const changePage = async function (nextPage: number, nextPageSize: number = 10) 
     ]);
     page.value = nextPage;
     pageSize.value = numberPerPage;
+    console.log('data: ', data);
     transactions.value = data;
     total.value = totalNumber;
   } finally {
     loading.value = false;
   }
+  console.log('loading: ', loading.value);
 };
 const showAll = function () {
   router.push('/tokens');

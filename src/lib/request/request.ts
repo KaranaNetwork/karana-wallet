@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
-import type { Context } from '@opentelemetry/api';
+import axios, { AxiosError, type AxiosRequestConfig, type Method } from 'axios';
+import type { Context, Span } from '@opentelemetry/api';
 import { message } from 'ant-design-vue';
 
 import store from '@/store/store';
@@ -16,19 +16,24 @@ export interface Options {
   ctx?: Context;
   isAlert?: boolean;
   ignoreTraceError?: boolean;
+  withTraceparent?: boolean;
 }
 
 class Request {
+  public apiUrl(path: string): string {
+    return path.startsWith('http://') || path.startsWith('https://')
+      ? path
+      : pathUtil.join(Config.apiUrl, path);
+  }
   public rpcUrl(path: string): string {
     return path.startsWith('http://') || path.startsWith('https://')
       ? path
       : pathUtil.join(Config.rpcUrl, path);
   }
-
-  public apiUrl(path: string): string {
+  public traUrl(path: string): string {
     return path.startsWith('http://') || path.startsWith('https://')
       ? path
-      : pathUtil.join(Config.apiUrl, path);
+      : pathUtil.join(Config.traUrl, path);
   }
 
   public cdn(path: string): string {
@@ -46,17 +51,96 @@ class Request {
     return s;
   }
 
-  public async post(path: string, params?: object) {
-    const url = this.apiUrl(path);
-    const instance = axiosInstance;
-    const response = await instance.post(url, params, {
-      headers: {},
-    });
-    const data = response.data;
-    if (_.get(data, 'code') != 0) {
-      throw new Error('error: ' + _.get(data, 'message'));
+  public setAxiosSpanRequestAttributes(span: Span, config: AxiosRequestConfig) {
+    span.setAttribute('location.origin', location.origin);
+    span.setAttribute('location.href', location.href);
+    span.setAttribute('request.method', config.method?.toUpperCase() ?? 'GET');
+    span.setAttribute('request.url', config.url ?? '');
+    span.setAttribute('account.address', store.account?.address ?? '');
+    span.setAttribute('account.publickKey32', store.account?.publicKey32 ?? '');
+    if (config.url && URL.canParse(config.url)) {
+      const url = new URL(config.url);
+      span.setAttribute('request.protocol', url.protocol);
+      span.setAttribute('request.host', url.host);
+      span.setAttribute('request.port', url.port);
+      span.setAttribute('request.path', url.pathname);
+      span.setAttribute('request.query', url.search);
     }
-    return _.get(data, 'data', {});
+  }
+
+  public setAxiosSpanResponseErrorAttributes(span: Span, e: unknown) {
+    trace.recordError(span, _.get(e, ['response', 'data', 'error']) ?? _.get(e, 'message'));
+    span.setAttribute('response.status', _.get(e, ['response', 'status']) ?? 'none');
+    span.setAttribute('response.data', _.get(e, ['response', 'data']));
+  }
+
+  public async axios(config: AxiosRequestConfig, options?: Options) {
+    const instance = axiosInstance;
+    const span = trace
+      .getTracer()
+      .startSpan(config.method + ':' + config.url?.split('?')[0], {}, options?.ctx);
+    this.setAxiosSpanRequestAttributes(span, config);
+    try {
+      const withTraceparent = options?.withTraceparent ?? false;
+      if (withTraceparent) {
+        if (config.headers) {
+          config.headers['traceparent'] = trace.traceparent(span);
+          config.headers['tracestate'] = trace.tracestate(span);
+        } else {
+          config.headers = {
+            traceparent: trace.traceparent(span),
+            tracestate: trace.tracestate(span),
+          };
+        }
+      }
+      const response = await instance.request(config);
+      span.setAttribute('response.status', response.status);
+      return response;
+    } catch (e: any) {
+      this.setAxiosSpanResponseErrorAttributes(span, e);
+      throw e;
+    } finally {
+      span.end();
+    }
+  }
+
+  public async request(method: Method, path: string, data?: any, options?: Options): Promise<any> {
+    const isAlert = options?.isAlert ?? true;
+    let url = path;
+    if (method == 'get' || method == 'GET') {
+      const queryString = new URLSearchParams(data).toString();
+      if (queryString != '') {
+        if (url.indexOf('?') > 0) {
+          url += '&' + queryString;
+        } else {
+          url += '?' + queryString;
+        }
+      }
+      data = undefined;
+    }
+    try {
+      const response = await this.axios({
+        method: method,
+        data: data,
+        url: url,
+      });
+      return response.data;
+    } catch (e: unknown) {
+      if (isAlert) {
+        message.error(
+          _.get(e, ['response', 'data', 'error']) ?? _.get(e, 'message') ?? 'unknown error',
+        );
+      }
+      throw e;
+    }
+  }
+
+  public async post(path: string, data?: object, options?: Options) {
+    return await this.request('POST', path, data, options);
+  }
+
+  public async get(path: string, query?: object, options?: Options) {
+    return await this.request('GET', path, query, options);
   }
 
   public async fetch(url: string, options?: Options) {
@@ -124,8 +208,7 @@ class Request {
       const result = _.get(data, 'result');
       return result;
     } catch (e: any) {
-      trace.recordError(span, _.get(e, ['response', 'data', 'error']) ?? _.get(e, 'message'));
-      span.setAttribute('rpc.status', _.get(e, ['response', 'status']) ?? 'none');
+      this.setAxiosSpanResponseErrorAttributes(span, e);
       message.error(_.get(e, 'message') ?? e);
       throw e;
     } finally {

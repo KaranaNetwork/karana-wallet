@@ -35,8 +35,8 @@
           </a-tooltip>
           <copy-button :text="item.assetId"></copy-button>
         </a-col>
-        <a-col class="table-cell" :span="2">{{ item.value }}</a-col>
-        <a-col class="table-cell" :span="2">{{ item.gasFee }}</a-col>
+        <a-col class="table-cell" :span="2">{{ BalanceService.humanLize(item.value ?? 0) }}</a-col>
+        <a-col class="table-cell" :span="2">{{ BalanceService.humanLize(item.gasFee ?? 0) }}</a-col>
         <a-col class="table-cell" :span="2">
           <a-button shape="round" class="button-green">
             {{ item.txStatus }}
@@ -53,6 +53,7 @@ import CopyButton from '@/components/media/CopyButton.vue';
 import { type PropType } from 'vue';
 import timeUtil from '@/lib/utils/time';
 import text from '@/lib/utils/text';
+import BalanceService from '@/lib/services/balance-service';
 import type { ITransaction } from '@/lib/models/transaction/transaction';
 
 defineProps({
