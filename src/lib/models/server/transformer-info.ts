@@ -9,12 +9,13 @@ export interface TransformerInfo {
     convertToLocalNetworkFee: number;
   };
   list: {
+    id: string;
     name: string;
-    local: string;
+    localToken: string;
     localBalance?: string;
-    omniverse: string;
+    omniToken: string;
     omniverseBalance?: string;
-    transformer: string;
-    icon: string;
+    transformerContract: string;
+    chainName: string;
   }[];
 }

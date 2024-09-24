@@ -16,7 +16,7 @@
         <a-row>
           <a-col :span="6" class="label"></a-col>
           <a-col :span="18" style="display: flex">
-            <a-input-search style="width: 100%" :value="token?.name"> </a-input-search>
+            <a-input style="width: 100%" :value="token?.name"> </a-input>
           </a-col>
         </a-row>
         <br />
@@ -36,15 +36,15 @@
             >
               <div style="font-weight: bold">Name: {{ token?.name }}</div>
               <div style="display: flex; justify-content: space-between">
-                <div>Per-Mint Limit: {{ token?.limit }}</div>
-                <div>Current Supply: {{ token?.amount }}</div>
+                <div>Per-Mint Amount: {{ BalanceService.humanLize(token?.mintAmount ?? '0') }}</div>
+                <div>Current Supply: {{ BalanceService.humanLize(token?.amount ?? '0') }}</div>
               </div>
               <div></div>
             </div>
           </a-col>
         </a-row>
         <br />
-        <a-row>
+        <a-row v-if="false">
           <a-col :span="6" class="label">Amount:</a-col>
           <a-col :span="18">
             <a-input style="width: 100%" v-model:value="amount"></a-input>
@@ -101,18 +101,12 @@
         </a-row>
         <br />
         <a-row>
-          <a-col :span="6" class="label">Per-Mint Limit:</a-col>
+          <a-col :span="6" class="label">Per-Mint Amount:</a-col>
           <a-col :span="18">
             <a-input v-model:value="form.perLimit"></a-input>
           </a-col>
         </a-row>
         <br />
-        <!-- <a-row>
-          <a-col :span="6" class="label">Per-Mint Price:</a-col>
-          <a-col :span="18">
-            <a-input v-model:value="form.price"></a-input>
-          </a-col>
-        </a-row> -->
       </div>
     </div>
     <template #footer>
@@ -207,7 +201,7 @@ const changeType = function (value: string) {
 
 const changeToken = function (value: IToken) {
   token.value = value;
-  amount.value = value.limit;
+  amount.value = BalanceService.withAccuracy(value.mintAmount);
 };
 
 const changeAvatar = () => {
@@ -334,7 +328,7 @@ const deploy = async function () {
     }
 
     const pricek = serverInfo.assets.price;
-    const limitk = BalanceService.withoutAccuracy(form.value.perLimit);
+    const mintAmount = BalanceService.withoutAccuracy(form.value.perLimit);
     const totalSupplyk = BalanceService.withoutAccuracy(form.value.totalSupply);
 
     await TransactionService.deploy({
@@ -344,7 +338,7 @@ const deploy = async function () {
       name: form.value.name,
       totalSupply: totalSupplyk,
       price: pricek,
-      limit: limitk,
+      mintAmount: mintAmount,
       salt: hex.padding0x(
         hex.intArrayToHex([
           Math.floor(Math.random() * 255),

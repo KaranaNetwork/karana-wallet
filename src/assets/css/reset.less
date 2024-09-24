@@ -48,6 +48,11 @@ nav {
   .ant-menu-submenu-selected {
     background-color: #1b1d21 !important;
     color: #ff7700 !important;
+    .ant-menu-submenu-title {
+      .ant-menu-title-content {
+        color: #ff7700 !important;
+      }
+    }
   }
 }
 .ant-menu-dark {
@@ -78,6 +83,9 @@ nav {
   .ant-pagination-item-active {
     background-color: #1b1d21;
     border: none;
+    a {
+      color: #ff7700;
+    }
   }
   .ant-pagination-next,
   .ant-pagination-prev {
@@ -85,7 +93,8 @@ nav {
       color: white;
     }
   }
-  .ant-pagination-jump-next {
+  .ant-pagination-jump-next,
+  .ant-pagination-jump-prev {
     .ant-pagination-item-container {
       .ant-pagination-item-ellipsis {
         color: white;

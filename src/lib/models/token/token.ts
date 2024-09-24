@@ -4,5 +4,5 @@ export interface IToken {
   deployTime: number;
   name: string;
   progress: number;
-  limit: string;
+  mintAmount: string;
 }

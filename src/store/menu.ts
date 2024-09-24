@@ -2,7 +2,7 @@ import { reactive } from 'vue';
 import router from '@/router/index';
 
 const state = reactive({
-  collapsed: false,
+  collapsed: true,
   selectedKeys: ['/'],
   openKeys: new Array<string>(),
   items: [

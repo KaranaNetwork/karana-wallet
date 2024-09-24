@@ -316,6 +316,7 @@ export default class OmniverseTransformerService {
   }
 
   async claim(txid: string) {
+    console.log("txid", txid)
     const data = await this.contract.methods.claim(txid);
     const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = await this.web3.eth.calculateFeeData();
     const params = [

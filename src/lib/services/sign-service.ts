@@ -13,7 +13,7 @@ export default class SignService {
     hashData += hexUtil.stringToHex(tx.metadata.name).padEnd(24 * 2, '0');
     hashData += hexUtil.intArrayToHex(tx.metadata.deployer);
     hashData += hexUtil.bigIntToHexLE(tx.metadata.total_supply, 32);
-    hashData += hexUtil.bigIntToHexLE(tx.metadata.limit, 32);
+    hashData += hexUtil.bigIntToHexLE(tx.metadata.mintAmount, 32);
     hashData += hexUtil.bigIntToHexLE(tx.metadata.price, 32);
     for (const input of tx.fee_inputs) {
       hashData += hexUtil.intArrayToHex(input.txid);
@@ -101,7 +101,7 @@ export default class SignService {
         salt: data.metadata.salt,
         name: data.metadata.name,
         deployer: data.metadata.deployer,
-        limit: data.metadata.limit,
+        mint_amount: data.metadata.mint_amount,
         price: data.metadata.price,
         total_supply: data.metadata.total_supply,
         fee_inputs: data.fee_inputs,
@@ -121,7 +121,7 @@ export default class SignService {
           { name: 'salt', type: 'bytes8' },
           { name: 'name', type: 'string' },
           { name: 'deployer', type: 'bytes32' },
-          { name: 'limit', type: 'uint128' },
+          { name: 'mint_amount', type: 'uint128' },
           { name: 'price', type: 'uint128' },
           { name: 'total_supply', type: 'uint128' },
           { name: 'fee_inputs', type: 'Input[]' },

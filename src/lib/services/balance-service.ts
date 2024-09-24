@@ -1,5 +1,7 @@
-import store from '@/store/store';
+import _ from 'lodash';
 import Decimal from 'decimal.js';
+
+import store from '@/store/store';
 import decimalUtil from '@/lib/utils/decimal';
 
 export default class BalanceService {
@@ -37,7 +39,8 @@ export default class BalanceService {
     }
     const a = decimalUtil.mul(balance, 10 ** decimals);
     if (decimalUtil.compareTo(0, a) == 0) {
-      return '0';
+      return '0';   
+      
     }
     return a.toFixed(0, Decimal.ROUND_FLOOR);
   }
@@ -51,7 +54,7 @@ export default class BalanceService {
     if (decimalUtil.compareTo(0, a) == 0) {
       return '0';
     }
-    return a.toFixed(decimals, Decimal.ROUND_FLOOR);
+    return _.trimEnd(_.trimEnd(a.toFixed(decimals, Decimal.ROUND_FLOOR), '0'), '.');
   }
 
   static convertToMinUnit(balance: Decimal.Value, decimals?: number): string {

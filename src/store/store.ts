@@ -1,11 +1,7 @@
 import _ from 'lodash';
 import { reactive } from 'vue';
 
-import hex from '@/lib/utils/hex';
-import MetamaskService from '@/lib/services/metamask-service';
-import AccountService from '@/lib/services/account-service';
 import Account from '@/lib/models/account/account';
-import AccountChain from '@/lib/models/account/account-chain';
 import Network from '@/lib/models/server/network';
 import type { ServerInfo } from '@/lib/models/server/server-info';
 import type { TransformerInfo } from '@/lib/models/server/transformer-info';
@@ -93,6 +89,14 @@ class StoreData {
     }
     this.isShowConnect = true;
     return false;
+  }
+
+  public getTransform(id: string) {
+    for (let i = 0; i < (this.transformerInfo?.list.length ?? 0); i++) {
+      if (this.transformerInfo?.list[i].id == id) {
+        return this.transformerInfo?.list[i];
+      }
+    }
   }
 }
 

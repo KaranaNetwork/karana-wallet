@@ -6,7 +6,7 @@ export interface ITransaction {
   txStatus: string;
   txTimestamp: number;
   txType: string;
-  value: unknown;
+  value: string;
 }
 
 export interface ITransfer {

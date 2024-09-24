@@ -40,9 +40,9 @@
         <div class="row">
           <div class="icon"><ThunderboltOutlined /></div>
           <div class="data-item">
-            <div class="label">Limit</div>
+            <div class="label">Per-Mint Amount</div>
             <div style="color: red">
-              {{ BalanceService.humanLize(_.get(token, 'metadata.limit')) }}
+              {{ BalanceService.humanLize(_.get(token, 'metadata.mintAmount')) }}
             </div>
           </div>
         </div>
@@ -50,7 +50,7 @@
           <div class="icon"><DollarOutlined /></div>
           <div class="data-item">
             <div class="label">Price</div>
-            <div>{{ _.get(token, 'metadata.price') }}</div>
+            <div>{{ BalanceService.humanLize(_.get(token, 'metadata.price')) }}</div>
           </div>
         </div>
         <div class="row">
@@ -102,11 +102,6 @@
         <a-col class="col" :span="7"><div class="gutter-box"></div></a-col>
         <a-col class="col" :span="7"><div class="gutter-box"></div></a-col>
       </a-row>
-      <!-- <a-row class="row">
-        <a-col class="col" :span="8">Coming Soon</a-col>
-        <a-col class="col" :span="8"></a-col>
-        <a-col class="col" :span="8"></a-col>
-      </a-row> -->
     </div>
   </main-layout>
 </template>

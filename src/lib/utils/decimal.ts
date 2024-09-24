@@ -2,7 +2,7 @@ import Decimal from 'decimal.js';
 
 class DecimalUtil {
   public isValidDecimal(x: string) {
-    return !isNaN(+x);
+    return /^\d+(\.\d+)?$/.test(x);
   }
 
   public mul(x: Decimal.Value, y: Decimal.Value): Decimal {

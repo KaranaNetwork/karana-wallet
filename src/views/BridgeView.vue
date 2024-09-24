@@ -42,7 +42,7 @@
               <div>
                 Balance:
                 {{ BalanceService.humanLize(l1Balance) }}
-                {{ store.transformerInfo?.list[transformIndex].name }}
+                {{ transformerInfo?.list[transformIndex].name }}
               </div>
             </div>
             <div class="body">
@@ -56,7 +56,7 @@
               >
                 <template #addonBefore>
                   <a @click="openSearch('l1Token')">
-                    {{ store.transformerInfo?.list[transformIndex].name }}
+                    {{ transformerInfo?.list[transformIndex].name }}
                     <CaretDownOutlined />
                   </a>
                 </template>
@@ -67,13 +67,13 @@
               <a-input v-else class="huge" size="large" placeholder="" :disabled="true">
                 <template #addonBefore>
                   <div>
-                    {{ store.transformerInfo?.list[transformIndex].name }}
+                    {{ transformerInfo?.list[transformIndex].name }}
                   </div>
                 </template>
               </a-input>
               <div class="error" v-if="isOverLimitL1 && swapType == 'up'">
-                Insufficient {{ store.transformerInfo?.list[transformIndex].name }}. Please add more
-                funds to {{ store.transformerInfo?.list[transformIndex].name }}.
+                Insufficient {{ transformerInfo?.list[transformIndex].name }}. Please add more funds
+                to {{ transformerInfo?.list[transformIndex].name }}.
               </div>
             </div>
           </div>
@@ -100,10 +100,10 @@
                 Balance:
                 {{
                   BalanceService.humanLize(
-                    store.transformerInfo?.list[transformIndex].omniverseBalance ?? 0,
+                    transformerInfo?.list[transformIndex].omniverseBalance ?? 0,
                   )
                 }}
-                {{ store.transformerInfo?.list[transformIndex].name }}
+                {{ transformerInfo?.list[transformIndex].name }}
               </div>
             </div>
             <div class="body">
@@ -117,7 +117,7 @@
               >
                 <template #addonBefore>
                   <a @click="openSearch('l2Token')">
-                    {{ store.transformerInfo?.list[transformIndex].name }}
+                    {{ transformerInfo?.list[transformIndex].name }}
                     <CaretDownOutlined />
                   </a>
                 </template>
@@ -128,13 +128,13 @@
               <a-input v-else class="huge" size="large" placeholder="" :disabled="true">
                 <template #addonBefore>
                   <div>
-                    {{ store.transformerInfo?.list[transformIndex].name }}
+                    {{ transformerInfo?.list[transformIndex].name }}
                   </div>
                 </template>
               </a-input>
               <div class="error" v-if="isOverLimitL2 && swapType == 'down'">
-                Insufficient {{ store.transformerInfo?.list[transformIndex].name }}. Please add more
-                funds to {{ store.transformerInfo?.list[transformIndex].name }}.
+                Insufficient {{ transformerInfo?.list[transformIndex].name }}. Please add more funds
+                to {{ transformerInfo?.list[transformIndex].name }}.
               </div>
             </div>
           </div>
@@ -145,18 +145,16 @@
             <div class="left">Transform fee</div>
             <div class="right">
               {{ BalanceService.humanLize(fees?.platformFee ?? 0) }}
-              {{ store.transformerInfo?.list[transformIndex].name }}
+              {{ transformerInfo?.list[transformIndex].name }}
             </div>
           </div>
           <div class="row">
             <div class="left">Eth fee</div>
-            <div class="right">{{ fees?.ethNetFee }} ETH</div>
+            <div class="right">{{ BalanceService.humanLize(fees?.ethNetFee ?? 0) }} ETH</div>
           </div>
           <div class="row">
             <div class="left">You will receive</div>
-            <div class="right">
-              {{ amount }} {{ store.transformerInfo?.list[transformIndex].name }}
-            </div>
+            <div class="right">{{ amount }} {{ transformerInfo?.list[transformIndex].name }}</div>
           </div>
         </div>
         <br />
@@ -211,8 +209,8 @@
           </a-input>
         </div>
         <br />
-        <div v-if="store.transformerInfo" class="list">
-          <template v-for="(item, i) in store.transformerInfo.list" :key="i">
+        <div v-if="transformerInfo" class="list">
+          <template v-for="(item, i) in transformerInfo.list" :key="i">
             <div
               class="item"
               @click="changeToken(i)"
@@ -223,13 +221,12 @@
                 <LoadingOutlined v-if="isChanging && changingIndex == i" />
                 <a-image
                   v-else
-                  :src="item.icon"
+                  :src="coinsrc"
                   alt="''"
                   :width="60"
                   :height="60"
                   style="border-radius: 30px"
                   :preview="false"
-                  fallback="data:image/png;base64,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"
                 />
               </div>
               <div class="content">
@@ -239,8 +236,8 @@
               <div class="tail">
                 {{
                   swapType == 'up'
-                    ? BalanceService.humanLize(store.transformerInfo?.list[i].localBalance ?? 0)
-                    : BalanceService.humanLize(store.transformerInfo?.list[i].omniverseBalance ?? 0)
+                    ? BalanceService.humanLize(transformerInfo?.list[i].localBalance ?? 0)
+                    : BalanceService.humanLize(transformerInfo?.list[i].omniverseBalance ?? 0)
                 }}
                 {{ item.name }}
               </div>
@@ -316,7 +313,7 @@
           <div class="left">Transform fee</div>
           <div class="right">
             {{ BalanceService.humanLize(fees?.platformFee ?? 0) }}
-            {{ store.transformerInfo?.list[transformIndex].name }}
+            {{ transformerInfo?.list[transformIndex].name }}
           </div>
         </div>
         <div class="row">
@@ -325,9 +322,7 @@
         </div>
         <div class="row">
           <div class="left">You will receive</div>
-          <div class="right">
-            {{ amount }} {{ store.transformerInfo?.list[transformIndex].name }}
-          </div>
+          <div class="right">{{ amount }} {{ transformerInfo?.list[transformIndex].name }}</div>
         </div>
         <div class="row">
           <div class="left"></div>
@@ -361,27 +356,25 @@
       <div class="tarnsaction-detail-body">
         <div class="card">
           <div class="time">
-            {{ time.iso(+(transformingRecord.timestamp ?? 0) * 1000) }}
+            {{ time.iso(+(transformingRecord?.timestampBegin ?? 0)) }}
           </div>
           <div class="amount">
-            {{ BalanceService.humanLize(transformingRecord.amount) }}
-            {{ store.transformerInfo?.list[transformIndex].name }}
+            {{ BalanceService.humanLize(transformingRecord?.amount ?? 0) }}
+            {{ transformerInfo?.list[transformIndex].name }}
           </div>
         </div>
         <div class="card">
           <div class="direction">
-            <div>{{ fromName(transformingRecord.direction) }}</div>
+            <div>{{ transformingRecord ? fromName(transformingRecord) : '' }}</div>
             <div>-></div>
-            <div>{{ toName(transformingRecord.direction) }}</div>
+            <div>{{ transformingRecord ? toName(transformingRecord) : '' }}</div>
           </div>
         </div>
         <div class="card">
           <div class="row">
             <div class="state">
               <div class="ok"></div>
-              <div>
-                Transaction initiated on {{ store.transformerInfo?.list[transformIndex].name }}
-              </div>
+              <div>Transaction initiated on {{ transformerInfo?.list[transformIndex].name }}</div>
             </div>
             <div></div>
           </div>
@@ -389,8 +382,8 @@
             <div class="state">
               <div
                 :class="
-                  TransformingState.Settled == transformingRecord.state ||
-                  TransformingState.Claimable == transformingRecord.state
+                  TransformingState.Settled == transformingRecord?.state ||
+                  TransformingState.Claimable == transformingRecord?.state
                     ? 'ok'
                     : 'no'
                 "
@@ -402,7 +395,7 @@
           <div class="row">
             <div class="state">
               <div
-                :class="TransformingState.Settled == transformingRecord.state ? 'ok' : 'no'"
+                :class="TransformingState.Settled == transformingRecord?.state ? 'ok' : 'no'"
               ></div>
               <div>Funds arrived on Ethereum</div>
             </div>
@@ -432,7 +425,7 @@
                 :loading="getActionLoading('claim:all')"
                 :disabled="
                   getActionDisabled('claim:all') ||
-                  pendingTransactionPageData.records.filter((record) => {
+                  pendingTransactionPageData.items.filter((record) => {
                     return record.state == TransformingState.Claimable;
                   }).length == 0
                 "
@@ -440,7 +433,7 @@
                 CLAIM ALL
               </a-button>
             </div>
-            <div class="table" v-if="pendingTransactionPageData.records.length > 0">
+            <div class="table" v-if="pendingTransactionPageData.items.length > 0">
               <a-row class="table-header">
                 <a-col :span="4">TIME</a-col>
                 <a-col :span="6">TOKEN</a-col>
@@ -452,39 +445,46 @@
               <a-divider style="background-color: grey" />
               <a-row
                 class="table-data"
-                v-for="(item, i) in pendingTransactionPageData.records"
+                v-for="(item, i) in pendingTransactionPageData.items"
                 :key="i"
                 @click="openTransformDetail(item)"
               >
-                <a-col :span="4"> {{ time.iso(+item.timestamp * 1000) }} </a-col>
+                <a-col :span="4"> {{ time.iso(+item.timestampBegin) }} </a-col>
                 <a-col :span="6">
-                  {{ currentCoin + ': ' + BalanceService.humanLize(item.amount) }}
+                  {{ recordName(item) + ': ' + BalanceService.humanLize(item.amount) }}
                 </a-col>
-                <a-col :span="3">{{ fromName(item.direction) }}</a-col>
-                <a-col :span="3">{{ toName(item.direction) }}</a-col>
+                <a-col :span="3">{{ fromName(item) }}</a-col>
+                <a-col :span="3">{{ toName(item) }}</a-col>
                 <a-col :span="4">{{ stateName(item.state) }}</a-col>
                 <a-col :span="4">
                   <a-button
                     v-if="item.direction == TransformingDirection.OmniverseToLocal"
                     class="button-blue"
                     @click.stop="claimOne(item)"
-                    :loading="getActionLoading('claim:' + item.txid)"
+                    :loading="getActionLoading('claim:' + item.id)"
                     :disabled="
                       item.state != TransformingState.Claimable ||
-                      getActionDisabled('claim:' + item.txid)
+                      getActionDisabled('claim:' + item.id)
                     "
                   >
                     CLAIM
                   </a-button>
                 </a-col>
               </a-row>
+              <a-pagination
+                :current="pendingTransactionPageData.page + 1"
+                v-model:page-size="pendingTransactionPageData.pageNumber"
+                :total="pendingTransactionPageData.total"
+                @change="changePendingHistory"
+                show-less-items
+              />
             </div>
             <div v-else>Looks like no transactions here yet</div>
           </div>
         </a-tab-pane>
         <a-tab-pane key="2" tab="Settled transactions">
           <div class="history-body">
-            <div class="table" v-if="settledTransactionPageData.records.length > 0">
+            <div class="table" v-if="settledTransactionPageData.items.length > 0">
               <a-row class="table-header">
                 <a-col :span="4">TIME</a-col>
                 <a-col :span="6">TOKEN</a-col>
@@ -495,19 +495,26 @@
               <a-divider style="background-color: grey" />
               <a-row
                 class="table-data"
-                v-for="(item, i) in settledTransactionPageData.records"
+                v-for="(item, i) in settledTransactionPageData.items"
                 :key="i"
                 @click="openTransformDetail(item)"
               >
-                <a-col :span="4"> {{ time.iso(+item.timestamp * 1000) }} </a-col>
+                <a-col :span="4"> {{ time.iso(+item.timestampBegin) }} </a-col>
                 <a-col :span="6">
-                  {{ currentCoin + ': ' + BalanceService.humanLize(item.amount) }}
+                  {{ recordName(item) + ': ' + BalanceService.humanLize(item.amount) }}
                 </a-col>
-                <a-col :span="3">{{ fromName(item.direction) }}</a-col>
-                <a-col :span="3">{{ toName(item.direction) }}</a-col>
+                <a-col :span="3">{{ fromName(item) }}</a-col>
+                <a-col :span="3">{{ toName(item) }}</a-col>
                 <a-col :span="4">{{ stateName(item.state) }}</a-col>
                 <a-col :span="4"> </a-col>
               </a-row>
+              <a-pagination
+                :current="settledTransactionPageData.page + 1"
+                v-model:page-size="settledTransactionPageData.pageNumber"
+                :total="settledTransactionPageData.total"
+                @change="changeSettledHistory"
+                show-less-items
+              />
             </div>
             <div v-else>Looks like no transactions here yet</div>
           </div>
@@ -518,6 +525,7 @@
 </template>
 
 <script lang="ts" setup>
+import coinsrc from '@/assets/image/coin.webp';
 import {
   RetweetOutlined,
   CaretDownOutlined,
@@ -537,17 +545,19 @@ import time from '@/lib/utils/time';
 import decimal from '@/lib/utils/decimal';
 import trace from '@/lib/utils/trace';
 import request, { type Options } from '@/lib/request/request';
+import OmniverseTransformerService from '@/lib/services/contract-services/omniverse-transformer-service';
 import TransactionService from '@/lib/services/transaction-service';
 import ERC20TokenService from '@/lib/services/contract-services/erc20-token-service';
-import OmniverseTransformerService, {
-  TransformingDirection,
-  type TransformingRecord,
-  TransformingState,
-} from '@/lib/services/contract-services/omniverse-transformer-service';
 import ConfigService from '@/lib/services/config-service';
 import BalanceService from '@/lib/services/balance-service';
-//import TransformService from '@/lib/services/transform-service';
 import AccountService from '@/lib/services/account-service';
+import type { TransformerInfo } from '@/lib/models/server/transformer-info';
+import transformerRequest from '@/lib/request/transformer-request';
+import TransformRecord, {
+  TransformingState,
+  TransformingDirection,
+} from '@/lib/models/transform/transform-record';
+import TransformRecordPageData from '@/lib/models/transform/transform-record-page-data';
 
 const isConnecting = ref(false);
 const connectingAction = ref('');
@@ -564,6 +574,8 @@ const isHistoryOpen = ref(false);
 const isTransactionDetailOpen = ref(false);
 const confirmChecked = ref(false);
 const activeKey = ref('1');
+
+const transformerInfo = ref<TransformerInfo>();
 
 const claimableNumber = ref('0');
 const upAmount = ref('');
@@ -582,36 +594,14 @@ const transformIndex = ref(0);
 
 let calculateGasFeeTime = 0;
 
-const pendingTransactionPageData = ref<{
-  records: Array<TransformingRecord>;
-  curIndex: number;
-  ended: boolean;
-}>({
-  records: [],
-  curIndex: 0,
-  ended: false,
-});
+const pendingTransactionPageData = ref<TransformRecordPageData>(new TransformRecordPageData());
 
-const settledTransactionPageData = ref<{
-  records: Array<TransformingRecord>;
-  curIndex: number;
-  ended: boolean;
-}>({
-  records: [],
-  curIndex: 0,
-  ended: false,
-});
+const settledTransactionPageData = ref<TransformRecordPageData>(new TransformRecordPageData());
 
-const transformingRecord = ref<TransformingRecord>({
-  txid: '0',
-  amount: '0',
-  timestamp: '0',
-  state: TransformingState.Pending,
-  direction: TransformingDirection.LocalToOmniverse,
-});
+const transformingRecord = ref<TransformRecord>();
 
 const currentCoin = computed(() => {
-  return store.transformerInfo?.list[transformIndex.value].name;
+  return transformerInfo.value?.list[transformIndex.value].name;
 });
 
 const itemsStyle = computed(() => {
@@ -632,7 +622,7 @@ const searchTitle = computed(() => {
 });
 
 const l1Balance = computed(() => {
-  return store.transformerInfo?.list[transformIndex.value].localBalance ?? 0;
+  return transformerInfo.value?.list[transformIndex.value].localBalance ?? 0;
 });
 
 const isOverLimitL1 = computed(() => {
@@ -647,7 +637,7 @@ const isOverLimitL1 = computed(() => {
 });
 
 const l2Balance = computed(() => {
-  return store.transformerInfo?.list[transformIndex.value].omniverseBalance ?? 0;
+  return transformerInfo.value?.list[transformIndex.value].omniverseBalance ?? 0;
 });
 
 const isOverLimitL2 = computed(() => {
@@ -688,7 +678,7 @@ let intervalRefreshEthBalance = setInterval(async () => {
 }, 60000);
 
 onMounted(async () => {
-  await ConfigService.getTransformerInfo();
+  transformerInfo.value = await transformerRequest.getTransformers();
   if (store.account && store.account.isComplete) {
     await afterAccountLoaded();
   }
@@ -739,51 +729,61 @@ const refreshBalances = async function (i: number, options?: { ctx?: Context }) 
 };
 
 const refreshOmniverseBalance = async function (i: number, options?: { ctx?: Context }) {
-  if (!store.transformerInfo?.list[i]) {
+  if (!transformerInfo.value?.list[i]) {
     return;
   }
   if (store.account && store.account.isComplete) {
     const span = trace.startSpan('transform:refreshOmniverseBalance', undefined, options?.ctx);
     const ctx = trace.contextFromParent(span);
     try {
-      const coin = store.transformerInfo.list[i];
-      const amount = await request.balanceOf(coin.omniverse, store.account.publicKey32, {
+      const coin = transformerInfo.value.list[i];
+      const amount = await request.balanceOf(coin.omniToken, store.account.publicKey32, {
         ctx: ctx,
       });
-      store.transformerInfo.list[i].omniverseBalance = amount;
+      transformerInfo.value.list[i].omniverseBalance = amount;
     } finally {
       span.end();
     }
   } else {
-    store.transformerInfo.list[i].omniverseBalance = '0';
+    transformerInfo.value.list[i].omniverseBalance = '0';
   }
-  store.setTransformerInfo(store.transformerInfo);
+  //store.setTransformerInfo(transformerInfo.value);
 };
 
 const refreshEthBalance = async function (i: number, options?: { ctx?: Context }) {
-  if (!store.transformerInfo?.list[i]) {
+  if (!transformerInfo.value?.list[i]) {
     return;
   }
   if (store.account && store.account.isComplete) {
     const span = trace.startSpan('transform:refreshEthBalance', undefined, options?.ctx);
     const ctx = trace.contextFromParent(span);
     try {
-      const coin = store.transformerInfo.list[i];
-      const transformerSvc = new OmniverseTransformerService(coin.transformer, store.account, {
-        ctx: ctx,
-      });
-      claimableNumber.value = (await transformerSvc.getClaimableNumber()).toString();
+      const coin = transformerInfo.value.list[i];
+      const transformerSvc = new OmniverseTransformerService(
+        coin.transformerContract,
+        store.account,
+        {
+          ctx: ctx,
+        },
+      );
+      claimableNumber.value =
+        (
+          await transformerRequest.getClaimableNumber(
+            { ethAccount: store.account.address },
+            options,
+          )
+        ).count + '';
       const localTokenAddress = await transformerSvc.getLocalTokenAddress();
       const erc20Svc = new ERC20TokenService(localTokenAddress, store.account, { ctx: ctx });
       const balance = (await erc20Svc.balanceOf()).toString();
-      store.transformerInfo.list[i].localBalance = balance;
+      transformerInfo.value.list[i].localBalance = balance;
     } finally {
       span.end();
     }
   } else {
-    store.transformerInfo.list[i].localBalance = '0';
+    transformerInfo.value.list[i].localBalance = '0';
   }
-  store.setTransformerInfo(store.transformerInfo);
+  store.setTransformerInfo(transformerInfo.value);
 };
 
 const changeToken = async function (i: number) {
@@ -851,7 +851,7 @@ const calculateGasFee = async function () {
   if (store.account?.isComplete) {
     if (swapType.value == 'up' && isValidAmount(upAmount.value)) {
       const transformer = new OmniverseTransformerService(
-        store.transformerInfo?.list[transformIndex.value].transformer ?? '',
+        transformerInfo.value?.list[transformIndex.value].transformerContract ?? '',
         store.account,
       );
       const fee = await transformer.getConvertToOmniverseGasFee();
@@ -859,7 +859,7 @@ const calculateGasFee = async function () {
       return fee;
     } else if (swapType.value == 'down' && isValidAmount(downAmount.value)) {
       const transformer = new OmniverseTransformerService(
-        store.transformerInfo?.list[transformIndex.value].transformer ?? '',
+        transformerInfo.value?.list[transformIndex.value].transformerContract ?? '',
         store.account,
       );
       const fee = await transformer.getConvertToLocalGasFee();
@@ -912,24 +912,24 @@ const up = async function () {
   span.setAttribute('transform.amount', upAmount.value);
   span.setAttribute(
     'transform.address',
-    store.transformerInfo?.list[transformIndex.value].transformer ?? '',
+    transformerInfo.value?.list[transformIndex.value].transformerContract ?? '',
   );
-  span.setAttribute('transform.name', store.transformerInfo?.list[transformIndex.value].name ?? '');
+  span.setAttribute('transform.name', transformerInfo.value?.list[transformIndex.value].name ?? '');
   span.setAttribute(
     'transform.local',
-    store.transformerInfo?.list[transformIndex.value].local ?? '',
+    transformerInfo.value?.list[transformIndex.value].localToken ?? '',
   );
   span.setAttribute(
     'transform.localBalance',
-    store.transformerInfo?.list[transformIndex.value].localBalance ?? '',
+    transformerInfo.value?.list[transformIndex.value].localBalance ?? '',
   );
   span.setAttribute(
     'transform.omniverse',
-    store.transformerInfo?.list[transformIndex.value].omniverse ?? '',
+    transformerInfo.value?.list[transformIndex.value].omniToken ?? '',
   );
   span.setAttribute(
     'transform.omniverseBalance',
-    store.transformerInfo?.list[transformIndex.value].omniverseBalance ?? '',
+    transformerInfo.value?.list[transformIndex.value].omniverseBalance ?? '',
   );
   const ctx = trace.contextFromParent(span);
   try {
@@ -941,14 +941,14 @@ const up = async function () {
     await switchNetwork(transformIndex.value, { ctx: ctx });
     upStep.value = 1;
     const transformer = new OmniverseTransformerService(
-      store.transformerInfo?.list[transformIndex.value].transformer ?? '',
+      transformerInfo.value?.list[transformIndex.value].transformerContract ?? '',
       account,
       { ctx: ctx },
     );
     const localTokenAddress = await transformer.getLocalTokenAddress();
     const erc20 = new ERC20TokenService(localTokenAddress, account, { ctx: ctx });
     const tx = await erc20.approve(
-      store.transformerInfo?.list[transformIndex.value].transformer ?? '',
+      transformerInfo.value?.list[transformIndex.value].transformerContract ?? '',
       BalanceService.withoutAccuracy(upAmount.value),
     );
     upStep.value = 2;
@@ -959,7 +959,7 @@ const up = async function () {
     //const transformService = new TransformService({ ctx: ctx });
     // await transformService.up({
     //   account: account,
-    //   transformerAddress: store.transformerInfo?.list[transformIndex.value].transformer ?? '',
+    //   transformerAddress: transformerInfo.value?.list[transformIndex.value].transformer ?? '',
     //   amount: BalanceService.withoutAccuracy(upAmount.value),
     // });
     upAmount.value = '0';
@@ -987,24 +987,24 @@ const down = async function () {
   span.setAttribute('transform.amount', downAmount.value);
   span.setAttribute(
     'transform.address',
-    store.transformerInfo?.list[transformIndex.value].transformer ?? '',
+    transformerInfo.value?.list[transformIndex.value].transformerContract ?? '',
   );
-  span.setAttribute('transform.name', store.transformerInfo?.list[transformIndex.value].name ?? '');
+  span.setAttribute('transform.name', transformerInfo.value?.list[transformIndex.value].name ?? '');
   span.setAttribute(
     'transform.local',
-    store.transformerInfo?.list[transformIndex.value].local ?? '',
+    transformerInfo.value?.list[transformIndex.value].localToken ?? '',
   );
   span.setAttribute(
     'transform.localBalance',
-    store.transformerInfo?.list[transformIndex.value].localBalance ?? '',
+    transformerInfo.value?.list[transformIndex.value].localBalance ?? '',
   );
   span.setAttribute(
     'transform.omniverse',
-    store.transformerInfo?.list[transformIndex.value].omniverse ?? '',
+    transformerInfo.value?.list[transformIndex.value].omniToken ?? '',
   );
   span.setAttribute(
     'transform.omniverseBalance',
-    store.transformerInfo?.list[transformIndex.value].omniverseBalance ?? '',
+    transformerInfo.value?.list[transformIndex.value].omniverseBalance ?? '',
   );
   const ctx = trace.contextFromParent(span);
   try {
@@ -1018,7 +1018,7 @@ const down = async function () {
 
     downStep.value = 1;
     const transformer = new OmniverseTransformerService(
-      store.transformerInfo?.list[transformIndex.value].transformer ?? '',
+      transformerInfo.value?.list[transformIndex.value].transformerContract ?? '',
       account,
       { ctx: ctx },
     );
@@ -1028,7 +1028,7 @@ const down = async function () {
         accountAddress: account.address,
         chainId: account.chainId,
         publicKey32: account.publicKey32,
-        assetId: store.transformerInfo?.list[transformIndex.value].omniverse ?? '',
+        assetId: transformerInfo.value?.list[transformIndex.value].omniToken ?? '',
         outputs: [
           {
             address: target,
@@ -1048,10 +1048,10 @@ const down = async function () {
     /*
     const transformService = new TransformService({ ctx: ctx });
     await transformService.down({
-      transformerAddress: store.transformerInfo?.list[transformIndex.value].transformer ?? '',
+      transformerAddress: transformerInfo.value?.list[transformIndex.value].transformer ?? '',
       account: account,
       amount: BalanceService.withoutAccuracy(downAmount.value),
-      tokenAssetId: store.transformerInfo?.list[transformIndex.value].omniverse ?? '',
+      tokenAssetId: transformerInfo.value?.list[transformIndex.value].omniverse ?? '',
     });
     */
     downAmount.value = '0';
@@ -1101,12 +1101,42 @@ const openHistory = async function () {
 
 const refreshHistory = async function (options?: Options) {
   const account = store.account;
-  const item = store.transformerInfo?.list[transformIndex.value];
+  const item = transformerInfo.value?.list[transformIndex.value];
   if (account && item) {
-    const transformer = new OmniverseTransformerService(item.transformer, account, options);
-    claimableNumber.value = (await transformer.getClaimableNumber()).toString();
-    pendingTransactionPageData.value = await transformer.getTransformingRecords(false);
-    settledTransactionPageData.value = await transformer.getTransformingRecords(true);
+    pendingTransactionPageData.value = await transformerRequest.getPendingRecords(
+      { ethAccount: account.address, page: pendingTransactionPageData.value.page },
+      options,
+    );
+    console.log('pendingTransactionPageData.value: ', pendingTransactionPageData.value);
+    settledTransactionPageData.value = await transformerRequest.getSettledRecords(
+      { ethAccount: account.address, page: pendingTransactionPageData.value.page },
+      options,
+    );
+
+    //const transformer = new OmniverseTransformerService(item.transformerContract, account, options);
+    claimableNumber.value =
+      (await transformerRequest.getClaimableNumber({ ethAccount: account.address }, options))
+        .count + '';
+    //pendingTransactionPageData.value = await transformer.getTransformingRecords(false);
+    //settledTransactionPageData.value = await transformer.getTransformingRecords(true);
+  }
+};
+
+const changePendingHistory = async function (page: number, pageSize: number) {
+  if (store.account) {
+    pendingTransactionPageData.value = await transformerRequest.getPendingRecords({
+      ethAccount: store.account.address,
+      page: page - 1,
+    });
+  }
+};
+
+const changeSettledHistory = async function (page: number, pageSize: number) {
+  if (store.account) {
+    settledTransactionPageData.value = await transformerRequest.getSettledRecords({
+      ethAccount: store.account.address,
+      page: page - 1,
+    });
   }
 };
 
@@ -1118,32 +1148,32 @@ const claimAll = async function () {
   connectingAction.value = 'claim:all';
   const span = trace.startSpan('claim:all');
   const ctx = trace.contextFromParent(span);
-  span.setAttribute('transform.name', store.transformerInfo?.list[transformIndex.value].name ?? '');
+  span.setAttribute('transform.name', transformerInfo.value?.list[transformIndex.value].name ?? '');
   span.setAttribute(
     'transform.address',
-    store.transformerInfo?.list[transformIndex.value].transformer ?? '',
+    transformerInfo.value?.list[transformIndex.value].transformerContract ?? '',
   );
   try {
     isConnecting.value = true;
     span.setAttribute('account.address', account.address);
     span.setAttribute('account.publicKey32', account.publicKey32);
     const transformer = new OmniverseTransformerService(
-      store.transformerInfo?.list[transformIndex.value].transformer ?? '',
+      transformerInfo.value?.list[transformIndex.value].transformerContract ?? '',
       account,
       {
         ctx: ctx,
       },
     );
     await transformer.claimAll();
-    const originRecords = pendingTransactionPageData.value.records;
+    const originRecords = pendingTransactionPageData.value.items;
     for (let i = 0; i < 12; i++) {
       await time.sleep(5000);
       await refreshHistory({ ctx: ctx });
       let has = false;
       let changed = false;
       for (const originRecord of originRecords) {
-        for (const record of pendingTransactionPageData.value.records) {
-          if (originRecord.txid == record.txid) {
+        for (const record of pendingTransactionPageData.value.items) {
+          if (originRecord.id == record.id) {
             has = true;
             if (record.state != originRecord.state) {
               changed = true;
@@ -1161,38 +1191,38 @@ const claimAll = async function () {
   }
 };
 
-const claimOne = async function (transformingRecord: TransformingRecord) {
+const claimOne = async function (transformingRecord: TransformRecord) {
   const account = store.account;
   if (!account?.isComplete) {
     return;
   }
-  connectingAction.value = 'claim:' + transformingRecord.txid;
+  const transform = store.getTransform(transformingRecord.transformerId);
+  connectingAction.value = 'claim:' + transformingRecord.id;
   const span = trace.startSpan('claim:one');
   const ctx = trace.contextFromParent(span);
-  span.setAttribute('transform.name', store.transformerInfo?.list[transformIndex.value].name ?? '');
-  span.setAttribute(
-    'transform.address',
-    store.transformerInfo?.list[transformIndex.value].transformer ?? '',
-  );
-  span.setAttribute('claim.txid', transformingRecord.txid);
+  span.setAttribute('transform.name', transform?.name ?? '');
+  span.setAttribute('transform.address', transform?.transformerContract ?? '');
+  span.setAttribute('claim.id', transformingRecord.id);
   span.setAttribute('claim.amount', transformingRecord.amount);
   try {
     isConnecting.value = true;
     const transformer = new OmniverseTransformerService(
-      store.transformerInfo?.list[transformIndex.value].transformer ?? '',
+      transform?.transformerContract ?? '',
       account,
       {
         ctx: ctx,
       },
     );
-    await transformer.claim(transformingRecord.txid);
+    await transformer.claim(
+      transformingRecord.id.split('#')[transformingRecord.id.split('#').length - 1],
+    );
     for (let i = 0; i < 20; i++) {
       await time.sleep(5000);
       await refreshHistory({ ctx: ctx });
       let has = false;
       let changed = false;
-      for (const record of pendingTransactionPageData.value.records) {
-        if (record.txid == transformingRecord.txid) {
+      for (const record of pendingTransactionPageData.value.items) {
+        if (record.id == transformingRecord.id) {
           has = true;
           if (record.state != transformingRecord.state) {
             changed = true;
@@ -1209,17 +1239,25 @@ const claimOne = async function (transformingRecord: TransformingRecord) {
   }
 };
 
-const openTransformDetail = async function (data: TransformingRecord) {
+const openTransformDetail = async function (data: TransformRecord) {
   isTransactionDetailOpen.value = true;
   transformingRecord.value = data;
 };
 
-const fromName = function (direction: TransformingDirection) {
-  return direction == TransformingDirection.LocalToOmniverse ? 'eth' : currentCoin.value;
+const recordName = function (record: TransformRecord) {
+  return store.getTransform(record.transformerId)?.name;
 };
 
-const toName = function (direction: TransformingDirection) {
-  return direction == TransformingDirection.LocalToOmniverse ? currentCoin.value : 'eth';
+const fromName = function (record: TransformRecord) {
+  return record.direction == TransformingDirection.LocalToOmniverse
+    ? 'eth'
+    : store.getTransform(record.transformerId)?.name;
+};
+
+const toName = function (record: TransformRecord) {
+  return record.direction == TransformingDirection.LocalToOmniverse
+    ? store.getTransform(record.transformerId)?.name
+    : 'eth';
 };
 
 const stateName = function (state: TransformingState) {

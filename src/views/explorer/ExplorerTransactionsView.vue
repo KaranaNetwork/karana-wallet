@@ -19,6 +19,9 @@
           <template v-if="column.key === 'txTimestamp'">
             {{ timeUtil.iso(record.txTimestamp * 1000) }}
           </template>
+          <template v-if="column.key === 'gasFee'">
+            {{ BalanceService.humanLize(record.gasFee) }}
+          </template>
         </template>
       </a-table>
       <a-pagination
@@ -40,6 +43,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import timeUtil from '@/lib/utils/time';
 import request from '@/lib/request/request';
+import BalanceService from '@/lib/services/balance-service';
 import type { ITransaction } from '@/lib/models/transaction/transaction';
 
 const columns = [

@@ -8,9 +8,9 @@ export default class Web3Service {
   static async discoverWallets() {
     const providers = await Web3.requestEIP6963Providers();
     for (const [key, value] of providers as any) {
-      store.setWallet(value.info);
       /* Based on your DApp's logic show use list of providers and get selected provider's UUID from user for injecting its EIP6963ProviderDetail.provider EIP1193 object into web3 object */
       if (value.info.name === 'MetaMask') {
+        store.setWallet(value.info);
         this.metamask = new Web3(value.provider);
         this.metamask.provider?.on('accountsChanged', (accounts) => {
           console.log('accountsChanged', accounts);
