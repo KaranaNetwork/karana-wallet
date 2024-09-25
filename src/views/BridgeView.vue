@@ -420,6 +420,7 @@
             <div class="history-notify" v-if="+claimableNumber > 0">
               <div>You have {{ claimableNumber }} transaction</div>
               <a-button
+                v-if="false"
                 class="button-blue"
                 @click="claimAll"
                 :loading="getActionLoading('claim:all')"
