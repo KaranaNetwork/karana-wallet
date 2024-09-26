@@ -115,6 +115,7 @@ const information = ref({
   blockHash: [],
   blockHeight: 0,
   midGasPrice: 0,
+  latestBatchId: 0,
   tokenTypeNumber: 0,
   totalTransactionNumber: 0,
 });

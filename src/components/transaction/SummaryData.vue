@@ -9,7 +9,7 @@
         </div>
         <div class="right">
           <div class="label">LATEST BATCH</div>
-          <div class="amount">{{ information.tokenTypeNumber }}</div>
+          <div class="amount">{{ information.latestBatchId }}</div>
         </div>
       </div>
       <div class="title">Latest Blocks</div>
@@ -123,6 +123,7 @@ const information = ref({
   blockHash: [],
   blockHeight: 0,
   midGasPrice: 0,
+  latestBatchId: 0,
   tokenTypeNumber: 0,
   totalTransactionNumber: 0,
 });

@@ -50,13 +50,12 @@ import TokensView from '@/components/token/TokensView.vue';
 import SummaryData from '@/components/transaction/SummaryData.vue';
 import { ref, onMounted } from 'vue';
 import request from '@/lib/request/request';
-import MetamaskService from '@/lib/services/metamask-service';
-import AccountService from '@/lib/services/account-service';
 
 const information = ref({
   blockHash: [],
   blockHeight: 0,
   midGasPrice: 0,
+  latestBatchId: 0,
   tokenTypeNumber: 0,
   totalTransactionNumber: 0,
 });
