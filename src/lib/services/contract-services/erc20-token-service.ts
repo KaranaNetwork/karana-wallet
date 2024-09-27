@@ -54,7 +54,7 @@ export default class ERC20TokenService {
   }
 
   async approve(spender: string, amount: string) {
-    const allowance = await this.contract.methods.allowance(this.account.address, this.contractAddress);
+    const allowance = await this.contract.methods.allowance(this.account.address, spender);
     if (allowance >= BigInt(amount)) {
       return;
     }

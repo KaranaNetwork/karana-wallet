@@ -29,7 +29,7 @@ class Methods {
   }
 
   public async allowance(owner: string, spender: string) {
-    return (await this.contractRequest.methodCall('decimals', [owner, spender])) as bigint;
+    return (await this.contractRequest.methodCall('allowance', [owner, spender])) as bigint;
   }
 
   public async approve(spender: string, amount: string) {

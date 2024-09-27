@@ -953,7 +953,9 @@ const up = async function () {
       BalanceService.withoutAccuracy(upAmount.value),
     );
     upStep.value = 2;
-    await erc20.waitForTransactionReceipt(tx as unknown as string);
+    if (tx) {
+      await erc20.waitForTransactionReceipt(tx as unknown as string);
+    }
     upStep.value = 3;
     await transformer.convertToOmniverse(BalanceService.withoutAccuracy(upAmount.value));
     upStep.value = 4;
