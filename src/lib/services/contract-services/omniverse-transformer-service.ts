@@ -253,7 +253,7 @@ export default class OmniverseTransformerService {
   }
 
   async convertToOmniverse(amount: string) {
-    const data = await this.contract.methods.convertToOmniverse(this.account.publicKey32, amount);
+    const data = await this.contract.methods.convertToOmniverse(this.account.publicKey, amount);
 
     const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = await this.web3.eth.calculateFeeData();
 
