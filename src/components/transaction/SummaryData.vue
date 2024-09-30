@@ -55,7 +55,7 @@
         </div>
         <div class="right">
           <div class="label">MED GAS PRICE</div>
-          <div class="amount">{{ information.midGasPrice }}</div>
+          <div class="amount">{{ BalanceService.humanLize(information.midGasPrice) }}</div>
         </div>
       </div>
 
@@ -116,6 +116,7 @@ import { ref, onMounted } from 'vue';
 import router from '@/router';
 import timeUtil from '@/lib/utils/time';
 import request from '@/lib/request/request';
+import BalanceService from '@/lib/services/balance-service';
 // import AccountService from "@/lib/services/account-service";
 // import { ITransaction } from "@/lib/models/transaction/transaction";
 
