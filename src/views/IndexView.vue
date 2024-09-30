@@ -29,7 +29,7 @@
             <div class="card-body">
               <div>
                 <div class="amount">
-                  {{ information.midGasPrice }}
+                  {{ BalanceService.humanLize(information.midGasPrice) }}
                 </div>
               </div>
               <div class="label">Med Gas Price</div>
@@ -48,8 +48,10 @@ import MainLayout from '@/components/layout/MainLayout.vue';
 import AccountNav from '@/components/account/AccountNav.vue';
 import TokensView from '@/components/token/TokensView.vue';
 import SummaryData from '@/components/transaction/SummaryData.vue';
+
 import { ref, onMounted } from 'vue';
 import request from '@/lib/request/request';
+import BalanceService from '@/lib/services/balance-service';
 
 const information = ref({
   blockHash: [],
