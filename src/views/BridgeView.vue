@@ -388,7 +388,7 @@
                     : 'no'
                 "
               ></div>
-              <div>Claim withdrawa</div>
+              <div>Claim withdraw</div>
             </div>
             <div></div>
           </div>
