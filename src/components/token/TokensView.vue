@@ -78,41 +78,43 @@
         </a-col>
       </a-row>
       <table class="table" v-if="false">
-        <tr class="title-row">
-          <th>Token List</th>
-          <th>{{ props.isSelf ? 'Amount' : 'Current Supply' }}</th>
-          <th>Progress</th>
-          <th v-if="!props.isSelf">Status</th>
-          <th>Actions</th>
-        </tr>
-        <tr class="data-row" v-for="(item, i) in list" :key="i" @click="openToken(item)">
-          <td>{{ item.name }}</td>
-          <td>{{ item.amount }}</td>
-          <td class="progress">
-            <a-progress
-              :percent="+((item.progress / 10000) * 100).toFixed(2)"
-              :strokeColor="'#ff7700'"
-              :trailColor="'#25272c'"
-            />
-          </td>
-          <td class="action">
-            <span>
-              <a-button class="button-default-outlined" @click.stop="transferClick(item)">
-                send
-              </a-button>
-            </span>
-            <span>
-              <a-button
-                class="button-default-outlined"
-                v-if="!isTokenMinted(item)"
-                @click.stop="!isTokenMinted(item) ? openMint(item) : null"
-                :style="isTokenMinted(item) ? { color: 'grey', cursor: 'default' } : {}"
-              >
-                mint
-              </a-button>
-            </span>
-          </td>
-        </tr>
+        <tbody>
+          <tr class="title-row">
+            <th>Token List</th>
+            <th>{{ props.isSelf ? 'Amount' : 'Current Supply' }}</th>
+            <th>Progress</th>
+            <th v-if="!props.isSelf">Status</th>
+            <th>Actions</th>
+          </tr>
+          <tr class="data-row" v-for="(item, i) in list" :key="i" @click="openToken(item)">
+            <td>{{ item.name }}</td>
+            <td>{{ item.amount }}</td>
+            <td class="progress">
+              <a-progress
+                :percent="+((item.progress / 10000) * 100).toFixed(2)"
+                :strokeColor="'#ff7700'"
+                :trailColor="'#25272c'"
+              />
+            </td>
+            <td class="action">
+              <span>
+                <a-button class="button-default-outlined" @click.stop="transferClick(item)">
+                  send
+                </a-button>
+              </span>
+              <span>
+                <a-button
+                  class="button-default-outlined"
+                  v-if="!isTokenMinted(item)"
+                  @click.stop="!isTokenMinted(item) ? openMint(item) : null"
+                  :style="isTokenMinted(item) ? { color: 'grey', cursor: 'default' } : {}"
+                >
+                  mint
+                </a-button>
+              </span>
+            </td>
+          </tr>
+        </tbody>
       </table>
       <a-empty v-if="list.length == 0 && !loading"></a-empty>
       <a-spin v-if="loading"></a-spin>

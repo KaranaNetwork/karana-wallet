@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
+import Config from '@/lib/config/config';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -84,6 +85,11 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  document.title = (to?.meta?.title as string) ?? Config.title;
+  next();
 });
 
 export default router;

@@ -1,4 +1,5 @@
 export default class Config {
+  public static title = 'Karana Devnet';
   public static readonly name = 'dev.omnicoins.net';
   public static readonly apiUrl = '/';
   public static readonly rpcUrl = 'https://server.dev.omnicoins.net';

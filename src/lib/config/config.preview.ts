@@ -1,4 +1,5 @@
 export default class Config {
+  public static title = 'Karana Preview';
   public static readonly name = 'test.omnicoins.net';
   public static readonly apiUrl = '/';
   public static readonly rpcUrl = 'https://server.test.omnicoins.net';

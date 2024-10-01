@@ -1,4 +1,5 @@
 export default class Config {
+  public static title = 'Karana Testnet';
   public static readonly name = 'test.karana.network';
   public static readonly apiUrl = '/';
   public static readonly rpcUrl = 'https://server.test.karana.network';
