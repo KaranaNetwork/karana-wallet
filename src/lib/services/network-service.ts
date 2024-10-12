@@ -1,3 +1,5 @@
+import Config from '@/lib/config/config';
+
 export default class NetworkService {
   public static networkConfig = {
     ArbitrumSepolia: {},
@@ -11,7 +13,7 @@ export default class NetworkService {
         url = `https://sepolia.arbiscan.io/tx/${value}`;
         break;
       case 'BITCOIN_LOCAL':
-        url = `http://47.254.40.186:5001/tx/${value}`;
+        url = `${Config.bitcoinLocalUrl}/tx/${value}`;
         break;
     }
     return url;

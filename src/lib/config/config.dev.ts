@@ -5,9 +5,10 @@ export default class Config {
   public static readonly rpcUrl = 'https://server.dev.omnicoins.net';
   public static readonly traUrl = 'https://transformer.dev.omnicoins.net';
   public static readonly cdnUrl = 'https://omniverse-metadata.s3.amazonaws.com';
+  public static readonly bitcoinLocalUrl = 'http://47.254.40.186:5001';
   public static readonly traceUrl = 'https://grpc.trace.karana.network/v1/traces';
-  public static readonly transformerUrl =
-    'https://omniverse-dev.s3.amazonaws.com/config/dev/transformer.json';
+  // public static readonly transformerUrl =
+  //   'https://omniverse-dev.s3.amazonaws.com/config/dev/transformer.json';
   public static readonly networksUrl =
     'https://omniverse-dev.s3.amazonaws.com/config/dev/networks.json';
 }
