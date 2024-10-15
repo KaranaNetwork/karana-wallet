@@ -723,6 +723,10 @@ const switchNetwork = async function (i: number, options?: { ctx?: Context }) {
   if (networks.length > 0) {
     await AccountService.switchNetwork(networks[0], options);
   }
+  const asset = transformerInfo.value?.list[i];
+  if (asset) {
+    await AccountService.watchAsset(asset, options);
+  }
 };
 
 const refreshBalances = async function (i: number, options?: { ctx?: Context }) {

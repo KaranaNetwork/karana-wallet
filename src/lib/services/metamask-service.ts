@@ -6,6 +6,7 @@ import trace from '@/lib/utils/trace';
 import store from '@/store/store';
 import Network from '@/lib/models/server/network';
 import Web3Service from '@/lib/services/web3-service';
+import { stringType } from 'ant-design-vue/es/_util/type';
 
 export default class MetamaskService {
   static readonly chains: _.Dictionary<string> = {
@@ -171,6 +172,27 @@ export default class MetamaskService {
             blockExplorerUrls: null,
           },
         ],
+      },
+      options,
+    );
+  }
+
+  static async watchAsset(
+    params: {
+      type: string;
+      options: {
+        address: string;
+        symbol: string;
+        decimals: number;
+        image: string;
+      };
+    },
+    options?: Options,
+  ) {
+    await this.request(
+      {
+        method: 'wallet_watchAsset',
+        params: params,
       },
       options,
     );

@@ -1,13 +1,13 @@
-import _ from 'lodash';
-import { getPolkadotAddressFromPubKey, getBitcoinAddressFromPubKey } from '@/lib/utils/crypto';
+import Account from '@/lib/models/account/account';
+import type { TransformerAsset } from '@/lib/models/server/transformer-info';
+import type { Options } from '@/lib/request/request';
+import MetamaskService from '@/lib/services/metamask-service';
+import { getBitcoinAddressFromPubKey, getPolkadotAddressFromPubKey } from '@/lib/utils/crypto';
+import time from '@/lib/utils/time';
 import store from '@/store/store';
 import { extractPublicKey } from '@metamask/eth-sig-util';
-import hexUtil from '@/lib/utils/hex';
-import MetamaskService from '@/lib/services/metamask-service';
-import type { Options } from '@/lib/request/request';
 import { message } from 'ant-design-vue';
-import time from '@/lib/utils/time';
-import Account from '@/lib/models/account/account';
+import _ from 'lodash';
 import type Network from '../models/server/network';
 
 export default class AccountService {
@@ -50,6 +50,21 @@ export default class AccountService {
     if (store.account) {
       store.account.chainId = +network.chainId;
     }
+  }
+
+  static async watchAsset(asset: TransformerAsset, options?: Options) {
+    await MetamaskService.watchAsset(
+      {
+        type: 'ERC20',
+        options: {
+          address: asset.localToken,
+          symbol: asset.name,
+          decimals: store.serverInfo?.assets.decimals ?? 12,
+          image: '',
+        },
+      },
+      options,
+    );
   }
 
   static async getAccount(options?: Options) {

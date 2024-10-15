@@ -8,14 +8,16 @@ export interface TransformerInfo {
     convertToLocalGas: number;
     convertToLocalNetworkFee: number;
   };
-  list: {
-    id: string;
-    name: string;
-    localToken: string;
-    localBalance?: string;
-    omniToken: string;
-    omniverseBalance?: string;
-    transformerContract: string;
-    chainName: string;
-  }[];
+  list: TransformerAsset[];
+}
+
+export interface TransformerAsset {
+  id: string;
+  name: string;
+  localToken: string;
+  localBalance?: string;
+  omniToken: string;
+  omniverseBalance?: string;
+  transformerContract: string;
+  chainName: string;
 }
