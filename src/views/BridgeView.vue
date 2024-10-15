@@ -140,6 +140,13 @@
           </div>
         </div>
         <br />
+        <div v-if="store.transformerInfo?.list" style="display: flex; justify-content: end">
+          <a style="color: #4096ff" @click="addTokenToMetamask">
+            <span v-if="addTokenToMetamaskLoading"><LoadingOutlined /></span>
+            Add token {{ store.transformerInfo?.list[transformIndex].name }} to Metamask
+          </a>
+        </div>
+        <br />
         <div class="gas-fees" v-show="fees">
           <div class="row">
             <div class="left">Transform fee</div>
@@ -723,9 +730,23 @@ const switchNetwork = async function (i: number, options?: { ctx?: Context }) {
   if (networks.length > 0) {
     await AccountService.switchNetwork(networks[0], options);
   }
-  const asset = transformerInfo.value?.list[i];
-  if (asset) {
-    await AccountService.watchAsset(asset, options);
+};
+
+const addTokenToMetamaskLoading = ref(false);
+const addTokenToMetamask = async function () {
+  if (addTokenToMetamaskLoading.value) {
+    return;
+  }
+  try {
+    addTokenToMetamaskLoading.value = true;
+    const i = transformIndex.value;
+    const asset = transformerInfo.value?.list[i];
+    if (asset) {
+      await AccountService.watchAsset(asset);
+      message.success(`Add token ${asset.name} success`)
+    }
+  } finally {
+    addTokenToMetamaskLoading.value = false;
   }
 };
 
