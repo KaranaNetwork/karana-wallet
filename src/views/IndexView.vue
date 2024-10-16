@@ -1,7 +1,6 @@
 <template>
   <main-layout>
-    <div class="container">
-      <account-nav> </account-nav>
+    <div class="container">   
       <div class="body">
         <div class="name">Overview</div>
         <div class="cards">
@@ -45,7 +44,6 @@
 
 <script lang="ts" setup>
 import MainLayout from '@/components/layout/MainLayout.vue';
-import AccountNav from '@/components/account/AccountNav.vue';
 import TokensView from '@/components/token/TokensView.vue';
 import SummaryData from '@/components/transaction/SummaryData.vue';
 
@@ -70,12 +68,19 @@ onMounted(async () => {
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/css/var.less';
+
 .container {
   padding: 50px;
   display: flex;
   flex-direction: column;
   gap: 50px;
   overflow: auto;
+  .h1 {
+    display: flex;
+    justify-content: start;
+    color: @primaryColor;
+  }
   .body {
     display: flex;
     flex-direction: column;

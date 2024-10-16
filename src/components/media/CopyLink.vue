@@ -1,12 +1,10 @@
 <template>
   <a @click="copy">
     <slot></slot>
-    <CopyOutlined />
   </a>
 </template>
 
 <script setup lang="ts">
-import { CopyOutlined } from '@ant-design/icons-vue';
 
 import textUtil from '@/lib/utils/text';
 import { message } from 'ant-design-vue';

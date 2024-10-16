@@ -6,18 +6,38 @@
         v-model:selectedKeys="state.selectedKeys"
         mode="horizontal"
         theme="dark"
-        :inline-collapsed="state.collapsed"
         :items="state.items"
         style="text-align: left; height: 100%"
         @click="jump"
       ></a-menu>
-      <div style="display: flex; gap: 10px">
-        <div v-if="store.account && store.account.isComplete" style="display: flex; gap: 10px">
-          <span>
-            <copy-button :text="store.account.address"></copy-button>
-            {{ text.middleEllipsis(store.account.address) }}
-          </span>
-          <a @click="logout"><LogoutOutlined /></a>
+      <div class="profile">
+        <div v-if="store.account && store.account.isComplete" class="profile-account">
+          <a-dropdown>
+            <template #overlay>
+              <div class="profile-menu">
+                <div class="profile-menu-item">
+                  <copy-link :text="store.account.address" style="display: flex; gap: 10px">
+                    <UserOutlined />
+                    {{ text.middleEllipsis(store.account.address, 5) }}
+                    <CopyOutlined />
+                  </copy-link>
+                </div>
+                <div class="profile-menu-item" @click="router.push({path: '/accounts'})">
+                  <WalletOutlined />
+                  MyOmniverse
+                  <RightOutlined />
+                </div>
+                <div class="profile-menu-item" @click="logout">
+                  <PoweroffOutlined />
+                  Disconnect
+                </div>
+              </div>
+            </template>
+            <a-button class="button-dark-outlined" style="border-radius: 20px">
+              {{ text.middleEllipsis(store.account.address, 5) }}
+              <DownOutlined />
+            </a-button>
+          </a-dropdown>
         </div>
         <div v-else>
           <a-button type="primary" @click="connect">Connect Wallet</a-button>
@@ -34,9 +54,16 @@
 </template>
 
 <script lang="ts" setup>
-import CopyButton from '@/components/media/CopyButton.vue';
+import CopyLink from '@/components//media/CopyLink.vue';
 import ConnectModal from '@/components/modal/ConnectModal.vue';
-import { LogoutOutlined } from '@ant-design/icons-vue';
+import {
+  DownOutlined,
+  RightOutlined,
+  UserOutlined,
+  WalletOutlined,
+  PoweroffOutlined,
+  CopyOutlined,
+} from '@ant-design/icons-vue';
 
 import { onMounted } from 'vue';
 import type { CSSProperties } from 'vue';
@@ -106,12 +133,41 @@ const logout = function () {
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/css/var.less';
+
 .layout {
   .header {
     .search {
       display: flex;
       width: 450px;
     }
+  }
+  .profile {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    .profile-account {
+      display: flex;
+      gap: 10px;
+    }
+  }
+}
+.profile-menu {
+  cursor: pointer;
+  color: white;
+  border: 1px solid white;
+  background-color: @secondaryBackgroundColor;
+  padding: 10px 0;
+  font-size: 16px;
+  .profile-menu-item {
+    height: 35px;
+    display: flex;
+    gap: 10px;
+    padding: 0 10px;
+    align-items: center;
+  }
+  .profile-menu-item:hover {
+    background-color: gray;
   }
 }
 </style>

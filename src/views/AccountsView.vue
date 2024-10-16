@@ -2,69 +2,62 @@
   <main-layout>
     <div class="container">
       <template v-if="store.account && store.account.isComplete">
-        <account-nav> </account-nav>
-        <div class="account-title">Omniverse Account</div>
-        <account-address></account-address>
-        <div class="chains">
-          <div class="chains-table">
-            <div class="chains-row">
-              <div class="header title-name">Chain Name</div>
-              <div class="header title-address">Local Address</div>
+        <div class="account-title">Account</div>
+        <div class="account">
+          <div class="avatar">
+            <img class="avatar-image" src="@/assets/image/coin.webp" />
+          </div>
+          <div class="info">
+            <div class="account-address">
+              {{ text.middleEllipsis(store.account.address, 5) }}
+              <copy-button :text="store.account.address"></copy-button>
             </div>
-            <div v-if="store.account" class="chains-row chains-row-data">
-              <div class="cell chain-name">
-                {{ store.account?.chains[AccountService.chainNames.substrate]?.name }}
-              </div>
-              <div class="cell chain-address">
-                <a-tooltip>
-                  <template #title>
-                    {{ store.account?.chains[AccountService.chainNames.substrate]?.address ?? '' }}
-                  </template>
-                  {{
-                    text.middleEllipsis(
-                      store.account?.chains[AccountService.chainNames.substrate]?.address ?? '',
-                    )
-                  }}
-                </a-tooltip>
-                <copy-button
-                  :text="store.account?.chains[AccountService.chainNames.substrate]?.address ?? ''"
-                ></copy-button>
-              </div>
-            </div>
-            <div class="chains-row chains-row-data">
-              <div class="cell chain-name">
-                {{ store.account?.chains[AccountService.chainNames.bitcion]?.name }}
-              </div>
-              <div class="cell chain-address">
-                <a-tooltip>
-                  <template #title>
-                    {{ store.account?.chains[AccountService.chainNames.bitcion]?.address ?? '' }}
-                  </template>
-                  {{
-                    text.middleEllipsis(
-                      store.account?.chains[AccountService.chainNames.bitcion]?.address ?? '',
-                    )
-                  }}
-                </a-tooltip>
-                <copy-button
-                  :text="store.account?.chains[AccountService.chainNames.bitcion]?.address ?? ''"
-                ></copy-button>
-              </div>
-            </div>
-            <div class="chains-row chains-row-data">
-              <div class="cell chain-name">Eth</div>
-              <div class="cell chain-address">
-                <a-tooltip>
-                  <template #title>
-                    {{ store.account?.address }}
-                  </template>
-                  {{ text.middleEllipsis(store.account?.address ?? '') }}
-                </a-tooltip>
-                <copy-button :text="store.account?.address ?? ''"></copy-button>
-              </div>
-            </div>
+            <div class="dollar"></div>
           </div>
         </div>
+        <account-address></account-address>
+        <a-tabs v-model:activeKey="activeKey" class="tab">
+          <a-tab-pane key="assets" tab="Assets">
+            <token-grid :is-self="true"></token-grid>
+            <div class="want">
+              Want to Deploy your own Omniverse Token,
+              <a @click="() => {}">click here</a>
+            </div>
+          </a-tab-pane>
+          <a-tab-pane key="activities" tab="Activities" force-render>
+            <div class="activity-buttons">
+              <a-button
+                class="button-dark-outlined"
+                :class="activeActivity == 'mint' ? 'active' : ''"
+                @click="changeActivity('mint')"
+              >
+                Mint
+              </a-button>
+              <a-button
+                class="button-dark-outlined"
+                :class="activeActivity == 'deploy' ? 'active' : ''"
+                @click="changeActivity('deploy')"
+              >
+                Deploy
+              </a-button>
+              <a-button
+                class="button-dark-outlined"
+                :class="activeActivity == 'transform' ? 'active' : ''"
+                @click="changeActivity('transform')"
+              >
+                Transform
+              </a-button>
+              <a-button
+                class="button-dark-outlined"
+                :class="activeActivity == 'send' ? 'active' : ''"
+                @click="changeActivity('send')"
+              >
+                Send
+              </a-button>
+            </div>
+          </a-tab-pane>
+        </a-tabs>
+
         <div class="body">
           <div class="name" style="margin-bottom: 10px">My Tokens</div>
           <tokens-view v-if="store.account" :is-self="true"></tokens-view>
@@ -99,7 +92,9 @@
 </template>
 <script setup lang="ts">
 import MainLayout from '@/components/layout/MainLayout.vue';
+import TokenGrid from '@/components/token/TokenGrid.vue';
 import TokensView from '@/components/token/TokensView.vue';
+import AccountAddress from '@/components/account/AccountAddress.vue';
 import TransactionTable from '@/components/transaction/TransactionTable.vue';
 import CopyButton from '@/components/media/CopyButton.vue';
 
@@ -107,7 +102,6 @@ import { ref, onMounted, watch } from 'vue';
 import store from '@/store/store';
 import router from '@/router';
 import text from '@/lib/utils/text';
-import AccountService from '@/lib/services/account-service';
 import request from '@/lib/request/request';
 import type { ITransaction } from '@/lib/models/transaction/transaction';
 
@@ -119,6 +113,9 @@ const information = ref({
   tokenTypeNumber: 0,
   totalTransactionNumber: 0,
 });
+
+const activeKey = ref('assets');
+const activeActivity = ref('mint');
 
 const page = ref(1);
 const pageSize = ref(25);
@@ -141,6 +138,10 @@ onMounted(async () => {
     await changePage(1);
   }
 });
+
+const changeActivity = function (key: string) {
+  activeActivity.value = key;
+};
 
 const changePage = async function (nextPage: number, nextPageSize: number = 10) {
   if (loading.value) {
@@ -169,64 +170,69 @@ const showAll = function () {
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/css/var.less';
+
 .container {
   padding: 50px;
   display: flex;
   flex-direction: column;
   gap: 50px;
+  text-align: left;
   .account-title {
     color: #ff7700;
     font-weight: bold;
     font-size: 16px;
     text-align: left;
   }
-  .chains {
+  .account {
     display: flex;
-    .chains-table {
-      flex-grow: 1;
-      display: flex;
-      gap: 10px;
-      flex-direction: column;
-      align-items: stretch;
-      .chains-row {
-        flex-grow: 1;
-        display: flex;
-        gap: 50px;
-
-        align-items: center;
-        .header {
-          font-weight: bold;
-        }
-        .title-name,
-        .chain-name {
-          width: 400px;
-          text-align: left;
-          padding-left: 300px;
-        }
-        .title-address,
-        .chain-address {
-          text-align: left;
-          flex-grow: 1;
-        }
-      }
-      .chains-row-data {
+    gap: 20px;
+    align-items: center;
+    .avatar {
+      .avatar-image {
         height: 50px;
-        background: #25272c;
+        width: 50px;
         border-radius: 25px;
-        //border: 1px solid whitesmoke;
-
-        .chain-name {
-          font-size: 12;
-          color: #858585;
-        }
-        .chain-address {
-          color: #78c9b3;
-          font-weight: bold;
-          font-family: 'Courier New';
-        }
+      }
+    }
+    .info {
+      .account-address {
+        font-size: 16px;
+      }
+      .dollar {
+        line-height: 25px;
+        font-size: 25px;
+        height: 25px;
       }
     }
   }
+
+  .tab:deep(.ant-tabs-tab) {
+    font-size: 25px;
+    font-weight: bold;
+  }
+
+  .tab {
+    .want {
+      font-size: 20px;
+      a {
+        text-decoration: underline;
+      }
+    }
+    .activity-buttons {
+      display: flex;
+      gap: 20px;
+      .button-dark-outlined {
+        width: 120px;
+        font-weight: normal;
+      }
+      .active {
+        color: @primaryColor;
+        border-color: @primaryColor;
+      }
+    }
+  }
+
   .body {
     display: flex;
     flex-direction: column;
