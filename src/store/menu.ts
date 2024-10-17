@@ -58,12 +58,6 @@ const state = reactive({
         },
       ],
     },
-    {
-      key: '/transform',
-      //icon: () => h(InboxOutlined),
-      label: 'Transform',
-      title: 'Transform',
-    },
   ],
   setSelectedKey(s: string) {
     this.selectedKeys = [s];
