@@ -18,12 +18,12 @@ const state = reactive({
       label: 'MyOmniverse',
       title: 'MyOmniverse',
     },
-    {
-      key: '/tokens',
-      //icon: () => h(InboxOutlined),
-      label: 'Tokens',
-      title: 'Tokens',
-    },
+    // {
+    //   key: '/tokens',
+    //   //icon: () => h(InboxOutlined),
+    //   label: 'Tokens',
+    //   title: 'Tokens',
+    // },
     {
       key: '/explorer',
       //icon: () => h(InboxOutlined),
