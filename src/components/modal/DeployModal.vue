@@ -29,7 +29,7 @@
                 display: flex;
                 flex-direction: column;
                 gap: 10px;
-                background-color: #25272c;
+                background-color: @secondaryBackgroundColor;
                 border-radius: 5px;
                 padding: 10px;
               "
@@ -369,3 +369,7 @@ const submit = async function () {
 
 defineExpose({ changeType, changeToken });
 </script>
+
+<style lang="less" scoped>
+@import '@/assets/css/var.less';
+</style>

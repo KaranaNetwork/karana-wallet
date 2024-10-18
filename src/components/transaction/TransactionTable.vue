@@ -63,6 +63,7 @@ defineProps({
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/css/var.less';
 .data {
   display: flex;
   .table {
@@ -94,7 +95,7 @@ defineProps({
       height: 50px;
       font-size: 12px;
       color: white;
-      background: #1b1d21;
+      background: @primaryBackgroundColor;
       border-radius: 25px;
       .asset-id,
       .tx-id {

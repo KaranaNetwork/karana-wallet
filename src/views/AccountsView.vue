@@ -179,7 +179,7 @@ const showAll = function () {
   gap: 50px;
   text-align: left;
   .account-title {
-    color: #ff7700;
+    color: @primaryColor;
     font-weight: bold;
     font-size: 16px;
     text-align: left;
@@ -238,7 +238,7 @@ const showAll = function () {
     flex-direction: column;
     .name {
       display: flex;
-      color: #ff7700;
+      color: @primaryColor;
       font-weight: bold;
       font-size: 16px;
     }
@@ -291,7 +291,7 @@ const showAll = function () {
       }
     }
     .transaction {
-      background-color: #25272c;
+      background-color: @secondaryBackgroundColor;
       border: none;
       .direction {
         display: flex;

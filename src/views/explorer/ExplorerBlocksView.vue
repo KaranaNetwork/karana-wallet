@@ -105,7 +105,7 @@ function rowClick(record: IBlock, index: number) {
   gap: 10px;
   .title {
     text-align: left;
-    background: #25272c;
+    background: @secondaryBackgroundColor;
     border-radius: 10px;
     padding: 10px;
     font-weight: bold;

@@ -11,17 +11,11 @@
         <a-col :span="3">Actions</a-col>
       </a-row>
       <a-row
+        class="row-data"
         v-for="(item, i) in list"
         :key="i"
         @click="openToken(item)"
         align="middle"
-        style="
-          text-align: left;
-          min-height: 50px;
-          font-weight: bold;
-          background: #1b1d21;
-          margin-bottom: 5px;
-        "
       >
         <a-col :span="1">
           <div style="display: flex; justify-content: center">
@@ -396,13 +390,15 @@ const openToken = function (token: IToken) {
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/css/var.less';
+
 .tokens {
   display: flex;
   flex-direction: column;
   gap: 5px;
   .name {
     display: flex;
-    color: #ff7700;
+    color: @primaryColor;
     font-weight: bold;
     font-size: 16px;
   }
@@ -412,11 +408,18 @@ const openToken = function (token: IToken) {
     font-weight: bold;
   }
   .data {
-    background-color: #25272c;
+    background-color: @secondaryBackgroundColor;
     padding: 0 10px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
+    .row-data {
+      text-align: left;
+      min-height: 50px;
+      font-weight: bold;
+      background: @primaryBackgroundColor;
+      margin-bottom: 5px;
+    }
     .table {
       flex-grow: 1;
       th,
@@ -429,8 +432,8 @@ const openToken = function (token: IToken) {
       .data-row {
         font-size: 12px;
         color: white;
-        background-color: #1b1d21;
-        border-bottom: 5px solid #25272c;
+        background-color: @primaryBackgroundColor;
+        border-bottom: 5px solid @secondaryBackgroundColor;
         .asset-id {
           span {
             display: block;
@@ -457,12 +460,12 @@ const openToken = function (token: IToken) {
           align-items: center;
           span {
             a {
-              color: #ff7700;
+              color: @primaryColor;
             }
           }
         }
         .button-minted {
-          background-color: #ff7700;
+          background-color: @primaryColor;
           color: white;
           border: none;
         }

@@ -416,7 +416,7 @@
       class="history"
       root-class-name="history"
       :width="1024"
-      style="background-color: #1b1d21; color: white"
+      style="background-color: @primaryBackgroundColor; color: white"
       title=""
       placement="right"
       :mask-closable="false"
@@ -1314,7 +1314,7 @@ const stateName = function (state: TransformingState) {
     padding: 0 10px;
     align-items: center;
     width: 800px;
-    background: #25272c;
+    background: @secondaryBackgroundColor;
     height: 50px;
     border: 1px solid #858585;
     border-radius: 5px;
@@ -1330,7 +1330,7 @@ const stateName = function (state: TransformingState) {
 
   .change-card {
     width: 800px;
-    background: #25272c;
+    background: @secondaryBackgroundColor;
     border: 1px solid #858585;
     border-radius: 5px;
     padding: 20px;

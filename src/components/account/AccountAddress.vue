@@ -79,6 +79,7 @@ import AccountService from '@/lib/services/account-service';
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/css/var.less';
 .account-address {
   font-size: 16px;
   font-weight: bold;
@@ -126,7 +127,7 @@ import AccountService from '@/lib/services/account-service';
       }
       .chains-row-data {
         height: 50px;
-        background: #25272c;
+        background: @secondaryBackgroundColor;
         .chain-name {
           font-size: 12;
           color: #858585;

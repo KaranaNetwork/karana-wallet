@@ -1,10 +1,10 @@
 <template>
   <main-layout>
-    <div class="container">   
+    <div class="container">
       <div class="body">
         <div class="name">Overview</div>
         <div class="cards">
-          <a-card class="card" style="flex-grow: 1; background-color: #25272c; border: 0">
+          <a-card class="card">
             <div class="card-body">
               <div>
                 <div class="amount">
@@ -14,7 +14,7 @@
               <div class="label">Total Number Of Transactions</div>
             </div>
           </a-card>
-          <a-card class="card" style="flex-grow: 1; background-color: #25272c; border: 0">
+          <a-card class="card">
             <div class="card-body">
               <div>
                 <div class="amount">
@@ -24,7 +24,7 @@
               <div class="label">Block Height</div>
             </div>
           </a-card>
-          <a-card class="card" style="flex-grow: 1; background-color: #25272c; border: 0">
+          <a-card class="card">
             <div class="card-body">
               <div>
                 <div class="amount">
@@ -87,7 +87,7 @@ onMounted(async () => {
     gap: 50px;
     .name {
       display: flex;
-      color: #ff7700;
+      color: @primaryColor;
       font-weight: bold;
       font-size: 16px;
     }
@@ -97,6 +97,9 @@ onMounted(async () => {
       gap: 20px;
       .card {
         color: white;
+        flex-grow: 1;
+        background-color: @secondaryBackgroundColor;
+        border: 0;
       }
       .card-body {
         display: flex;
@@ -105,7 +108,7 @@ onMounted(async () => {
         .amount {
           height: 100px;
           width: 100px;
-          border: 10px solid #ff7700;
+          border: 10px solid @primaryColor;
           border-radius: 50px;
           display: flex;
           justify-content: center;
@@ -154,7 +157,7 @@ onMounted(async () => {
     // .data {
     //   display: flex;
     //   justify-content: space-between;
-    //   background-color: #25272c;
+    //   background-color: @secondaryBackgroundColor;
     //   gap: 5px;
     //   padding-bottom: 30px;
     //   .data-left,
@@ -215,7 +218,7 @@ onMounted(async () => {
     //         margin-left: 100px;
     //         .data-cell {
     //           padding: 10px;
-    //           background: #ff7700;
+    //           background: @primaryColor;
     //           color: white;
     //           border-radius: 5px;
     //         }

@@ -1,3 +1,5 @@
+@import '@/assets/css/var.less';
+
 .button-gradient {
   border: none;
   color: white;
@@ -46,7 +48,7 @@
   font-weight: bold;
   border: none;
   color: white;
-  background-color: #ff7700;
+  background-color: @primaryColor;
 }
 .button-default:hover {
   color: white;
@@ -55,21 +57,21 @@
 .button-default-outlined {
   font-weight: bold;
   border: none;
-  color: #ff7700;
+  color: @primaryColor;
   background-color: transparent;
-  border: 1px solid #ff7700;
+  border: 1px solid @primaryColor;
 }
 .button-default-outlined:not(:disabled):hover {
-  color: #ff7700;
+  color: @primaryColor;
   background-color: transparent;
-  border: 1px solid #ff7700;
+  border: 1px solid @primaryColor;
 }
 
 .button-dark-outlined {
   font-weight: bold;
   border: none;
   color: white;
-  background-color: #1b1d21;
+  background-color: @primaryBackgroundColor;
   border: 1px solid white;
 }
 .button-dark-outlined:hover, .button-dark-outlined:not(:disabled):hover {

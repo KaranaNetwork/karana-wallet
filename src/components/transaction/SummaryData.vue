@@ -180,10 +180,11 @@ const openTransactions = function () {
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/css/var.less';
 .data {
   display: flex;
   justify-content: space-between;
-  background-color: #25272c;
+  background-color: @secondaryBackgroundColor;
   gap: 5px;
   padding-bottom: 30px;
   .data-left,
@@ -216,7 +217,7 @@ const openTransactions = function () {
       height: 100px;
       margin-bottom: 5px;
       //border-bottom: 10px solid rgb(255, 249, 254);
-      background-color: #1b1d21;
+      background-color: @primaryBackgroundColor;
       cursor: pointer;
       .block-row-1 {
         display: flex;
@@ -244,7 +245,7 @@ const openTransactions = function () {
         margin-left: 100px;
         .data-cell {
           padding: 10px;
-          background: #ff7700;
+          background: @primaryColor;
           color: white;
           border-radius: 5px;
         }
@@ -256,7 +257,7 @@ const openTransactions = function () {
     padding-right: 5px;
     .transaction-row {
       height: 100px;
-      background-color: #1b1d21;
+      background-color: @primaryBackgroundColor;
       margin-bottom: 5px;
       //border-bottom: 10px solid;
       cursor: pointer;

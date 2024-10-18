@@ -3,6 +3,7 @@
     <div class="container">
       <div class="title">Batches</div>
       <a-table
+        class="table"
         :loading="loading"
         :dataSource="batches"
         :columns="[
@@ -45,7 +46,7 @@
           <template v-if="column.key === 'l1Tx'">
             <div v-for="(v, i) in record.l1Tx" :key="i">
               <span> {{ v[0] }}: </span>
-              <a :href="NetworkService.getURL(v[0], v[1])" target="_blank" style="color: #ff7700">
+              <a :href="NetworkService.getURL(v[0], v[1])" target="_blank">
                 {{ v[1] }}
               </a>
             </div>
@@ -111,14 +112,21 @@ const changePage = async function (nextPage: number, nextPageSize: number) {
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/css/var.less';
+
 .container {
   .title {
     text-align: left;
-    background: #25272c;
+    background: @secondaryBackgroundColor;
     border-radius: 10px;
     padding: 10px;
     font-weight: bold;
     font-size: 18px;
+  }
+  .table {
+    a {
+      color: #ff7700;
+    }
   }
 }
 </style>

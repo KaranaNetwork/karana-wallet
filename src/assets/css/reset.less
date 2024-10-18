@@ -31,8 +31,8 @@ nav {
 
 .ant-spin {
   .ant-spin-dot-item {
-    color: #ff7700;
-    background-color: #ff7700;
+    color: @primaryColor;
+    background-color: @primaryColor;
   }
 }
 
@@ -42,25 +42,25 @@ nav {
     border-top-right-radius: 50px;
     border-bottom-right-radius: 50px;
     color: white;
-    background-color: #1b1d21;
+    background-color: @primaryBackgroundColor;
   }
   .ant-menu-item-selected,
   .ant-menu-submenu-selected {
-    background-color: #1b1d21 !important;
-    color: #ff7700 !important;
+    background-color: @primaryBackgroundColor !important;
+    color: @primaryColor !important;
     .ant-menu-submenu-title {
       .ant-menu-title-content {
-        color: #ff7700 !important;
+        color: @primaryColor !important;
       }
     }
   }
 }
 .ant-menu-dark {
-  background-color: #25272c;
+  background-color: @secondaryBackgroundColor;
 }
 .ant-menu-dark.ant-menu-submenu {
   .ant-menu {
-    background-color: #25272c;
+    background-color: @secondaryBackgroundColor;
   }
 }
 
@@ -68,7 +68,7 @@ nav {
   color: white;
   .ant-tabs-tab.ant-tabs-tab-active {
     .ant-tabs-tab-btn {
-      color: #ff7700;
+      color: @primaryColor;
     }
   }
 }
@@ -81,10 +81,10 @@ nav {
     }
   }
   .ant-pagination-item-active {
-    background-color: #1b1d21;
+    background-color: @primaryBackgroundColor;
     border: none;
     a {
-      color: #ff7700;
+      color: @primaryColor;
     }
   }
   .ant-pagination-next,
@@ -100,7 +100,7 @@ nav {
         color: white;
       }
       .ant-pagination-item-link-icon {
-        color: #ff7700;
+        color: @primaryColor;
       }
     }
   }
@@ -113,7 +113,7 @@ nav {
 .ant-input {
   color: white;
   border: none;
-  background-color: #25272c;
+  background-color: @secondaryBackgroundColor;
 }
 
 .ant-input::placeholder {
@@ -145,15 +145,15 @@ nav {
 
 .ant-table-wrapper {
   .ant-table {
-    background-color: #25272c;
+    background-color: @secondaryBackgroundColor;
     color: white;
     .ant-table-thead {
       tr {
         th,
         .ant-table-cell {
-          background-color: #25272c;
+          background-color: @secondaryBackgroundColor;
           color: white;
-          border-bottom: 1px solid #1b1d21;
+          border-bottom: 1px solid @primaryBackgroundColor;
         }
       }
     }
@@ -161,20 +161,20 @@ nav {
       .ant-table-row {
         .ant-table-cell,
         .ant-table-cell-row-hover {
-          border-top: 1px solid #1b1d21;
-          background-color: #25272c;
+          border-top: 1px solid @primaryBackgroundColor;
+          background-color: @secondaryBackgroundColor;
         }
       }
       .ant-table-row:last-child {
         .ant-table-cell,
         .ant-table-cell-row-hover {
-          border-bottom: 1px solid #1b1d21;
+          border-bottom: 1px solid @primaryBackgroundColor;
         }
       }
       .ant-table-row:hover {
         .ant-table-cell,
         .ant-table-cell-row-hover {
-          background-color: #1b1d21;
+          background-color: @primaryBackgroundColor;
         }
       }
     }
@@ -183,11 +183,11 @@ nav {
 
 .ant-modal {
   .ant-modal-content {
-    background-color: #1b1d21;
+    background-color: @primaryBackgroundColor;
     color: white;
     .ant-modal-title {
       color: white;
-      background-color: #1b1d21;
+      background-color: @primaryBackgroundColor;
     }
   }
   .ant-modal-close {

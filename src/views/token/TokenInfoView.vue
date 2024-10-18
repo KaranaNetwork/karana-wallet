@@ -140,10 +140,12 @@ onMounted(async () => {
 });
 </script>
 <style lang="less">
+@import '@/assets/css/var.less';
+
 .token-info {
   margin: 10px;
   padding: 10px;
-  background-color: #25272c;
+  background-color: @secondaryBackgroundColor;
   border-radius: 5px;
   .title {
     text-align: left;
@@ -159,7 +161,7 @@ onMounted(async () => {
     .row {
       height: 50px;
       padding: 10px;
-      background-color: #1b1d21;
+      background-color: @primaryBackgroundColor;
       display: flex;
       gap: 10px;
       .icon {
@@ -184,18 +186,18 @@ onMounted(async () => {
 .other-info {
   margin: 10px;
   padding: 10px;
-  background-color: #25272c;
+  background-color: @secondaryBackgroundColor;
   border-radius: 5px;
   .row {
     .col,
     .gutter-row {
       height: 50px;
-      background-color: #1b1d21;
+      background-color: @primaryBackgroundColor;
       display: flex;
       align-items: center;
       justify-content: center;
       .gutter-box {
-        background-color: #1b1d21;
+        background-color: @primaryBackgroundColor;
         padding: 5px;
       }
     }

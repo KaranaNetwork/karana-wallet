@@ -13,10 +13,10 @@ const state = reactive({
       title: 'Overview',
     },
     {
-      key: '/accounts',
+      key: '/inscribe',
       //icon: () => h(DesktopOutlined),
-      label: 'MyOmniverse',
-      title: 'MyOmniverse',
+      label: 'inscribe',
+      title: 'inscribe',
     },
     {
       key: '/tokens',

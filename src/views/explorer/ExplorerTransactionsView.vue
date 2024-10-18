@@ -130,13 +130,15 @@ function rowClick(record: ITransaction, index: number) {
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/css/var.less';
+
 .transactions {
   display: flex;
   flex-direction: column;
   gap: 10px;
   .title {
     text-align: left;
-    background: #25272c;
+    background: @secondaryBackgroundColor;
     border-radius: 10px;
     padding: 10px;
     font-weight: bold;

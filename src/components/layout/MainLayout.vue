@@ -22,7 +22,7 @@
                     <CopyOutlined />
                   </copy-link>
                 </div>
-                <div class="profile-menu-item" @click="router.push({path: '/accounts'})">
+                <div class="profile-menu-item" @click="toAccounts">
                   <WalletOutlined />
                   MyOmniverse
                   <RightOutlined />
@@ -86,7 +86,6 @@ const layoutStyle: CSSProperties = {
 };
 
 const headerStyle: CSSProperties = {
-  //textAlign: "center",
   color: 'white',
   height: '80px',
   lineHeight: '80px',
@@ -95,7 +94,6 @@ const headerStyle: CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
   borderBottom: '0',
-  //borderColor: "#F0F0F0",
 };
 
 const contentStyle: CSSProperties = {
@@ -125,6 +123,10 @@ onMounted(() => {
 
 const connect = async function () {
   store.showConnect();
+};
+
+const toAccounts = function () {
+  router.push({ path: '/accounts' });
 };
 
 const logout = function () {

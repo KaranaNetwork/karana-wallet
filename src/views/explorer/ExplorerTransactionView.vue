@@ -180,9 +180,10 @@ onMounted(async () => {
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/css/var.less';
 .container {
   flex-grow: 1;
-  background: #1b1d21;
+  background: @primaryBackgroundColor;
   display: flex;
   flex-direction: column;
   padding: 0 50px;
@@ -205,7 +206,7 @@ onMounted(async () => {
       }
       .table-header,
       .table-data {
-        border-bottom: solid 1px #25272c;
+        border-bottom: solid 1px @secondaryBackgroundColor;
       }
     }
   }
