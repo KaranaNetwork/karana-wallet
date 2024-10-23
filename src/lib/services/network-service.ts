@@ -16,7 +16,11 @@ export default class NetworkService {
         url = `${Config.bitcoinLocalUrl}/tx/${value}`;
         break;
       case 'ETHEREUM_LOCAL':
-        url = `https://moonbase.moonscan.io/tx/${value}`
+        url = `https://moonbase.moonscan.io/tx/${value}`;
+        break;
+      case 'MOONBASE':
+        url = `https://moonbase.moonscan.io/tx/${value}`;
+        break;
     }
     return url;
   }
