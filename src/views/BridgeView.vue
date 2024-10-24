@@ -416,7 +416,6 @@
       class="history"
       root-class-name="history"
       :width="1024"
-      style="background-color: @primaryBackgroundColor; color: white"
       title=""
       placement="right"
       :mask-closable="false"
@@ -743,7 +742,7 @@ const addTokenToMetamask = async function () {
     const asset = transformerInfo.value?.list[i];
     if (asset) {
       await AccountService.watchAsset(asset);
-      message.success(`Add token ${asset.name} success`)
+      message.success(`Add token ${asset.name} success`);
     }
   } finally {
     addTokenToMetamaskLoading.value = false;
@@ -1516,5 +1515,9 @@ const stateName = function (state: TransformingState) {
       }
     }
   }
+}
+.history {
+  background-color: @primaryBackgroundColor;
+  color: white;
 }
 </style>
