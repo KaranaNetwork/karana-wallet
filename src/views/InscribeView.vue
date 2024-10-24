@@ -40,12 +40,20 @@
           <div class="col">
             <a-input
               v-model:value="deployForm.totalSupply"
+              @change="changeDeployTotalSupply"
               class="text-field"
               placeholder="Total Supply amount ..."
             ></a-input>
-            <div class="error"></div>
           </div>
         </div>
+        <div class="row">
+          <div class="col label"></div>
+          <div class="col error">
+            {{ deployError.totalSupply }}
+          </div>
+        </div>
+        <br />
+        <br />
         <div class="row">
           <div class="col label">Per-Mint Amount</div>
           <div class="col">
@@ -156,6 +164,24 @@ const changeDeployName = function (e: InputEvent) {
   } else {
     deployError.value.name = '';
   }
+};
+
+const changeDeployTotalSupply = function (e: InputEvent) {
+  deployForm.value.totalSupply = deployForm.value.totalSupply.replace(/\D+/g, '');
+  if (deployForm.value.totalSupply.length > 20) {
+    deployForm.value.totalSupply = deployForm.value.totalSupply.substring(0, 20);
+  }
+  //@ts-ignore
+  e.target.value = deployForm.value.totalSupply;
+};
+
+const changeDeployPerMintAmount = function (e: InputEvent) {
+  deployForm.value.perLimit = deployForm.value.perLimit.replace(/\D+/g, '');
+  if (deployForm.value.perLimit.length > 20) {
+    deployForm.value.perLimit = deployForm.value.perLimit.substring(0, 20);
+  }
+  //@ts-ignore
+  e.target.value = deployForm.value.perLimit;
 };
 
 const changeToken = function (value: IToken) {
@@ -374,6 +400,11 @@ const submit = async function () {
         display: flex;
         justify-content: end;
         width: 200px;
+      }
+      .error {
+        font-size: 14px;
+        font-weight: normal;
+        color: #facd91;
       }
     }
     .comment {
