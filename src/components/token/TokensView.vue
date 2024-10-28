@@ -488,8 +488,6 @@ const openToken = function (token: IToken) {
       display: flex;
       gap: 10px;
     }
-    .plus {
-    }
   }
 }
 </style>

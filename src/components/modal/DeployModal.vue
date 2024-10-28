@@ -29,7 +29,6 @@
                 display: flex;
                 flex-direction: column;
                 gap: 10px;
-                background-color: @secondaryBackgroundColor;
                 border-radius: 5px;
                 padding: 10px;
               "

@@ -134,11 +134,11 @@
           <div><a-button class="button-yellow">Pay With Wallet</a-button></div>
           <div>
             <div>
-              <div>Balance: </div>
+              <div>Balance:</div>
               <div></div>
             </div>
             <div>
-              <div>Payment Address: </div>
+              <div>Payment Address:</div>
               <div></div>
             </div>
           </div>
@@ -152,11 +152,10 @@
 import MainLayout from '@/components/layout/MainLayout.vue';
 import { ClockCircleOutlined } from '@ant-design/icons-vue';
 import _ from 'lodash';
-import { ref, type PropType, nextTick } from 'vue';
+import { ref } from 'vue';
 import { message } from 'ant-design-vue';
 
 import store from '@/store/store';
-import text from '@/lib/utils/text';
 import hex from '@/lib/utils/hex';
 import decimal from '@/lib/utils/decimal';
 import request from '@/lib/request/request';
@@ -182,13 +181,13 @@ class DeployError {
 
 const type = ref('deploy');
 const visible = defineModel('visible', { default: false });
-const token = defineModel('token', { type: Object as PropType<IToken> });
+// const token = defineModel('token', { type: Object as PropType<IToken> });
 const isConfirmOpen = ref(false);
 
-const showAvatarCropper = ref(false);
-const isAvatarCropperReady = ref(false);
+// const showAvatarCropper = ref(false);
+
 const avatarEditMedia = ref(new EditMedia());
-const avatarUrl = ref('');
+// const avatarUrl = ref('');
 const buttonLoading = ref(false);
 const loading = ref(false);
 const amount = ref('0');
@@ -271,30 +270,30 @@ const openConfirm = function () {
   isConfirmOpen.value = true;
 };
 
-const changeToken = function (value: IToken) {
-  token.value = value;
-  amount.value = BalanceService.withAccuracy(value.mintAmount);
-};
+// const changeToken = function (value: IToken) {
+//   token.value = value;
+//   amount.value = BalanceService.withAccuracy(value.mintAmount);
+// };
 
-const changeAvatar = () => {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/jpg, image/jpeg, image/png, image/gif, image/webp';
-  input.onchange = (event) => {
-    let file = _.get(event, 'target.files[0]') as unknown as File;
-    avatarEditMedia.value.src = URL.createObjectURL(file);
-    avatarEditMedia.value.setFile(file);
-    showAvatarCropper.value = true;
-  };
-  input.click();
-};
+// const changeAvatar = () => {
+//   const input = document.createElement('input');
+//   input.type = 'file';
+//   input.accept = 'image/jpg, image/jpeg, image/png, image/gif, image/webp';
+//   input.onchange = (event) => {
+//     let file = _.get(event, 'target.files[0]') as unknown as File;
+//     avatarEditMedia.value.src = URL.createObjectURL(file);
+//     avatarEditMedia.value.setFile(file);
+//     showAvatarCropper.value = true;
+//   };
+//   input.click();
+// };
 
-const cropAvatar = (data: EditMedia) => {
-  avatarEditMedia.value = data;
-  avatarUrl.value = data.editSrc;
-  showAvatarCropper.value = false;
-  console.log('avatarEditMedia:', avatarEditMedia.value);
-};
+// const cropAvatar = (data: EditMedia) => {
+//   avatarEditMedia.value = data;
+//   avatarUrl.value = data.editSrc;
+//   showAvatarCropper.value = false;
+//   console.log('avatarEditMedia:', avatarEditMedia.value);
+// };
 
 const mint = async function (token: IToken) {
   if (buttonLoading.value) {
@@ -405,13 +404,13 @@ const deploy = async function () {
   visible.value = false;
 };
 
-const submit = async function () {
-  if (type.value == 'mint' && token.value) {
-    await mint(token.value);
-  } else if (type.value == 'deploy') {
-    await deploy();
-  }
-};
+// const submit = async function () {
+//   if (type.value == 'mint' && token.value) {
+//     await mint(token.value);
+//   } else if (type.value == 'deploy') {
+//     await deploy();
+//   }
+// };
 </script>
 
 <style lang="less" scoped>
