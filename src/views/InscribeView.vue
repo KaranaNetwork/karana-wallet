@@ -15,60 +15,68 @@
         </div>
         <br />
         <br />
-        <div class="row">
-          <div class="col label">Tick</div>
-          <div class="col">
-            <a-input
-              v-model:value="deployForm.name"
-              @change="changeDeployName"
-              class="text-field"
-              placeholder='2-8 characters like "ab" ...'
-            >
-            </a-input>
+        <template v-if="type == 'deploy'">
+          <div class="row">
+            <div class="col label">Tick</div>
+            <div class="col">
+              <a-input
+                v-model:value="deployForm.name"
+                @change="changeDeployName"
+                class="text-field"
+                placeholder='2-8 characters like "ab" ...'
+              >
+              </a-input>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col label"></div>
-          <div class="col error">
-            {{ deployError.name }}
+          <div class="row">
+            <div class="col label"></div>
+            <div class="col error">
+              {{ deployError.name }}
+            </div>
           </div>
-        </div>
-        <br />
-        <br />
-        <div class="row">
-          <div class="col label">Total Supply</div>
-          <div class="col">
-            <a-input
-              v-model:value="deployForm.totalSupply"
-              @change="changeDeployTotalSupply"
-              class="text-field"
-              placeholder="Total Supply amount ..."
-            ></a-input>
+          <br />
+          <br />
+          <div class="row">
+            <div class="col label">Total Supply</div>
+            <div class="col">
+              <a-input
+                v-model:value="deployForm.totalSupply"
+                @change="changeDeployTotalSupply"
+                class="text-field"
+                placeholder="Total Supply amount ..."
+              ></a-input>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col label"></div>
-          <div class="col error">
-            {{ deployError.totalSupply }}
+          <div class="row">
+            <div class="col label"></div>
+            <div class="col error">
+              {{ deployError.totalSupply }}
+            </div>
           </div>
-        </div>
-        <br />
-        <br />
-        <div class="row">
-          <div class="col label">Per-Mint Amount</div>
-          <div class="col">
-            <a-input
-              v-model:value="deployForm.perLimit"
-              class="text-field"
-              placeholder="Limit Amount ..."
-            ></a-input>
-            <div class="error"></div>
+          <br />
+          <br />
+          <div class="row">
+            <div class="col label">Per-Mint Amount</div>
+            <div class="col">
+              <a-input
+                v-model:value="deployForm.mintAmount"
+                @change="changeDeployMintAmount"
+                class="text-field"
+                placeholder="Limit Amount ..."
+              ></a-input>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col label">Network Fee</div>
-          <div class="col"></div>
-        </div>
+          <div class="row">
+            <div class="col label"></div>
+            <div class="col error">
+              {{ deployError.mintAmount }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col label">Network Fee</div>
+            <div class="col"></div>
+          </div>
+        </template>
         <div class="row">
           <div class="col label"></div>
           <div class="col">
@@ -96,18 +104,53 @@
         <div class="row">
           <div class="col label"></div>
           <div class="col action">
-            <a-button class="button-yellow">Submit & Pay invoice</a-button>
+            <a-button class="button-yellow" @click="openConfirm">Submit & Pay invoice</a-button>
           </div>
         </div>
       </div>
       <div class="activities"></div>
     </div>
+    <a-modal v-model:open="isConfirmOpen" :footer="null" :destroyOnClose="true" width="1000px">
+      <div class="confirm-body">
+        <div>
+          <ClockCircleOutlined />
+        </div>
+        <h1>Waiting on Payment in xxxxxx</h1>
+        <div>
+          <div>
+            <div>Total()</div>
+            <div></div>
+          </div>
+          <div>
+            <div>Network Fee</div>
+            <div>0.01</div>
+          </div>
+          <div>
+            <div>Service Fee</div>
+            <div>0.01</div>
+          </div>
+        </div>
+        <div>
+          <div><a-button class="button-yellow">Pay With Wallet</a-button></div>
+          <div>
+            <div>
+              <div>Balance: </div>
+              <div></div>
+            </div>
+            <div>
+              <div>Payment Address: </div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a-modal>
   </main-layout>
 </template>
 
 <script setup lang="ts">
 import MainLayout from '@/components/layout/MainLayout.vue';
-import { CameraOutlined } from '@ant-design/icons-vue';
+import { ClockCircleOutlined } from '@ant-design/icons-vue';
 import _ from 'lodash';
 import { ref, type PropType, nextTick } from 'vue';
 import { message } from 'ant-design-vue';
@@ -115,6 +158,7 @@ import { message } from 'ant-design-vue';
 import store from '@/store/store';
 import text from '@/lib/utils/text';
 import hex from '@/lib/utils/hex';
+import decimal from '@/lib/utils/decimal';
 import request from '@/lib/request/request';
 import ConfigService from '@/lib/services/config-service';
 import MetamaskService from '@/lib/services/metamask-service';
@@ -126,19 +170,20 @@ import BalanceService from '@/lib/services/balance-service';
 class DeployForm {
   name = '';
   totalSupply = '';
-  perLimit = '';
+  mintAmount = '';
   salt = '';
 }
 
 class DeployError {
   name = '';
   totalSupply = '';
-  perLimit = '';
+  mintAmount = '';
 }
 
 const type = ref('deploy');
 const visible = defineModel('visible', { default: false });
 const token = defineModel('token', { type: Object as PropType<IToken> });
+const isConfirmOpen = ref(false);
 
 const showAvatarCropper = ref(false);
 const isAvatarCropperReady = ref(false);
@@ -149,7 +194,40 @@ const loading = ref(false);
 const amount = ref('0');
 const deployForm = ref(new DeployForm());
 const deployError = ref(new DeployError());
-const deployPre = new DeployForm();
+
+const checkDeployError = function (checks: string[] = ['name', 'totalSupply', 'mintAmount']) {
+  if (checks.indexOf('name') >= 0) {
+    const regex = /^[a-zA-Z0-9]{2,8}$/;
+    if (!regex.test(deployForm.value.name)) {
+      deployError.value.name = 'tick must 2-8 characters';
+    } else {
+      deployError.value.name = '';
+    }
+  }
+
+  if (checks.indexOf('totalSupply') >= 0) {
+    if (deployForm.value.totalSupply == '' || +deployForm.value.totalSupply == 0) {
+      deployError.value.totalSupply = 'Total or Limit is required';
+    } else {
+      deployError.value.totalSupply = '';
+    }
+  }
+
+  if (checks.indexOf('mintAmount') >= 0) {
+    if (deployForm.value.mintAmount == '' || +deployForm.value.mintAmount == 0) {
+      deployError.value.mintAmount = 'Total or Limit is required';
+    } else if (
+      decimal.compareTo(
+        deployForm.value.totalSupply == '' ? 0 : deployForm.value.totalSupply,
+        deployForm.value.mintAmount == '' ? 0 : deployForm.value.mintAmount,
+      ) < 0
+    ) {
+      deployError.value.mintAmount = 'Total must greater than limit';
+    } else {
+      deployError.value.mintAmount = '';
+    }
+  }
+};
 
 const changeDeployName = function (e: InputEvent) {
   if (deployForm.value.name.length > 8) {
@@ -158,12 +236,8 @@ const changeDeployName = function (e: InputEvent) {
     e.target.value = deployForm.value.name;
     return;
   }
-  const regex = /^[a-zA-Z0-9]{2,8}$/;
-  if (!regex.test(deployForm.value.name)) {
-    deployError.value.name = 'tick must 2-8 characters';
-  } else {
-    deployError.value.name = '';
-  }
+
+  checkDeployError(['name']);
 };
 
 const changeDeployTotalSupply = function (e: InputEvent) {
@@ -173,15 +247,28 @@ const changeDeployTotalSupply = function (e: InputEvent) {
   }
   //@ts-ignore
   e.target.value = deployForm.value.totalSupply;
+  checkDeployError(['totalSupply', 'mintAmount']);
 };
 
-const changeDeployPerMintAmount = function (e: InputEvent) {
-  deployForm.value.perLimit = deployForm.value.perLimit.replace(/\D+/g, '');
-  if (deployForm.value.perLimit.length > 20) {
-    deployForm.value.perLimit = deployForm.value.perLimit.substring(0, 20);
+const changeDeployMintAmount = function (e: InputEvent) {
+  deployForm.value.mintAmount = deployForm.value.mintAmount.replace(/\D+/g, '');
+  if (deployForm.value.mintAmount.length > 20) {
+    deployForm.value.mintAmount = deployForm.value.mintAmount.substring(0, 20);
   }
+
+  // if (deployForm.value.totalSupply != '' && deployForm.value.mintAmount != '') {
+  //   if (decimal.compareTo(deployForm.value.mintAmount, deployForm.value.totalSupply) > 0) {
+  //     deployForm.value.mintAmount = deployForm.value.totalSupply;
+  //   }
+  // }
+
   //@ts-ignore
-  e.target.value = deployForm.value.perLimit;
+  e.target.value = deployForm.value.mintAmount;
+  checkDeployError(['mintAmount']);
+};
+
+const openConfirm = function () {
+  isConfirmOpen.value = true;
 };
 
 const changeToken = function (value: IToken) {
@@ -262,7 +349,7 @@ const deploy = async function () {
     message.error('totalSupply must not be blank');
     return;
   }
-  if (deployForm.value.perLimit == '') {
+  if (deployForm.value.mintAmount == '') {
     message.error('perLimit must not be blank');
     return;
   }
@@ -287,7 +374,7 @@ const deploy = async function () {
     }
 
     const pricek = serverInfo.assets.price;
-    const mintAmount = BalanceService.withoutAccuracy(deployForm.value.perLimit);
+    const mintAmount = BalanceService.withoutAccuracy(deployForm.value.mintAmount);
     const totalSupplyk = BalanceService.withoutAccuracy(deployForm.value.totalSupply);
 
     await TransactionService.deploy({
