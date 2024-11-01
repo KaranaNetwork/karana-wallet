@@ -216,6 +216,57 @@ class Request {
     }
   }
 
+  public async rpcWithPath(path: string, name: string, params?: object, options?: Options) {
+    const url = this.rpcUrl(path);
+    const instance = axiosInstance;
+    const id = new Date().getTime();
+    const span = trace.getTracer().startSpan('rpc:' + name, undefined, options?.ctx);
+    span.setAttribute('location.href', location.href);
+    span.setAttribute('account.address', store.account?.address ?? '');
+    span.setAttribute('account.publicKey32', store.account?.publicKey32 ?? '');
+    span.setAttribute('rpc.url', url);
+    span.setAttribute('rpc.id', id);
+    span.setAttribute('rpc.method', name);
+    span.setAttribute('rpc.params', JSON.stringify(params));
+    try {
+      const response = await instance.post(url, {
+        jsonrpc: '2.0',
+        method: name,
+        params: params,
+        id: id,
+      });
+      let data = response.data;
+      span.setAttribute('rpc.status', response.status);
+      span.setAttribute('rpc.data', JSON.stringify(data));
+      data = objectUtil.camelCaseKeys(data);
+      if (_.isEmpty(_.get(data, 'jsonrpc'))) {
+        throw new AxiosError(
+          'internal error: ' + data,
+          _.get(data, 'ERR_BAD_REQUEST'),
+          undefined,
+          undefined,
+          response,
+        );
+      } else if (!_.isEmpty(_.get(data, 'error'))) {
+        throw new AxiosError(
+          _.get(data, 'error.message'),
+          _.get(data, 'ERR_BAD_REQUEST'),
+          undefined,
+          undefined,
+          response,
+        );
+      }
+      const result = _.get(data, 'result');
+      return result;
+    } catch (e: any) {
+      this.setAxiosSpanResponseErrorAttributes(span, e);
+      message.error(_.get(e, 'message') ?? e);
+      throw e;
+    } finally {
+      span.end();
+    }
+  }
+
   public async put(
     path: string,
     file: File,

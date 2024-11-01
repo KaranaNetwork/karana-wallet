@@ -1,14 +1,16 @@
-import Account from '@/lib/models/account/account';
-import type { TransformerAsset } from '@/lib/models/server/transformer-info';
-import type { Options } from '@/lib/request/request';
-import MetamaskService from '@/lib/services/metamask-service';
+import _ from 'lodash';
+import { extractPublicKey } from '@metamask/eth-sig-util';
+import { message } from 'ant-design-vue';
 import { getBitcoinAddressFromPubKey, getPolkadotAddressFromPubKey } from '@/lib/utils/crypto';
 import time from '@/lib/utils/time';
 import store from '@/store/store';
-import { extractPublicKey } from '@metamask/eth-sig-util';
-import { message } from 'ant-design-vue';
-import _ from 'lodash';
-import type Network from '../models/server/network';
+
+import MetamaskService from '@/lib/services/metamask-service';
+import Account from '@/lib/models/account/account';
+
+import type { TransformerAsset } from '@/lib/models/server/transformer-info';
+import type { Options } from '@/lib/request/request';
+import type Network from '@/lib/models/server/network';
 
 export default class AccountService {
   static isAccountLoading = false;
