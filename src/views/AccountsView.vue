@@ -25,36 +25,7 @@
             </div>
           </a-tab-pane>
           <a-tab-pane key="activities" tab="Activities" force-render>
-            <div class="activity-buttons">
-              <a-button
-                class="button-dark-outlined"
-                :class="activeActivity == 'mint' ? 'active' : ''"
-                @click="changeActivity('mint')"
-              >
-                Mint
-              </a-button>
-              <a-button
-                class="button-dark-outlined"
-                :class="activeActivity == 'deploy' ? 'active' : ''"
-                @click="changeActivity('deploy')"
-              >
-                Deploy
-              </a-button>
-              <a-button
-                class="button-dark-outlined"
-                :class="activeActivity == 'transform' ? 'active' : ''"
-                @click="changeActivity('transform')"
-              >
-                Transform
-              </a-button>
-              <a-button
-                class="button-dark-outlined"
-                :class="activeActivity == 'send' ? 'active' : ''"
-                @click="changeActivity('send')"
-              >
-                Send
-              </a-button>
-            </div>
+            <activity-tab-list></activity-tab-list>
           </a-tab-pane>
         </a-tabs>
 
@@ -93,6 +64,7 @@
 <script setup lang="ts">
 import MainLayout from '@/components/layout/MainLayout.vue';
 import TokenGrid from '@/components/token/TokenGrid.vue';
+import ActivityTabList from '@/components/activity/ActivityTabList.vue';
 import TokensView from '@/components/token/TokensView.vue';
 import AccountAddress from '@/components/account/AccountAddress.vue';
 import TransactionTable from '@/components/transaction/TransactionTable.vue';
@@ -147,7 +119,7 @@ const changePage = async function (nextPage: number, nextPageSize: number = 10) 
   if (loading.value) {
     return;
   }
-  console.log('loading: ', loading.value);
+  console.log('loading: ', loading.value, nextPageSize);
   try {
     loading.value = true;
     const { data, totalNumber, numberPerPage } = await request.rpc('getLatestUserTransactions', [

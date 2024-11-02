@@ -77,6 +77,26 @@
             <div class="col"></div>
           </div>
         </template>
+        <template v-if="type == 'mint'">
+          <div class="row">
+            <div class="col label">Tick</div>
+            <div class="col">
+              <a-input
+                v-model:value="deployForm.name"
+                @change="changeDeployName"
+                class="text-field"
+                placeholder='2-8 characters like "ab" ...'
+              >
+              </a-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col label"></div>
+            <div class="col error">
+              {{ deployError.name }}
+            </div>
+          </div>
+        </template>
         <div class="row">
           <div class="col label"></div>
           <div class="col">
@@ -112,32 +132,42 @@
     </div>
     <a-modal v-model:open="isConfirmOpen" :footer="null" :destroyOnClose="true" width="1000px">
       <div class="confirm-body">
-        <div>
+        <div class="title-icon">
           <ClockCircleOutlined />
         </div>
         <h1>Waiting on Payment in xxxxxx</h1>
-        <div>
-          <div>
-            <div>Total()</div>
-            <div></div>
+        <br />
+        <br />
+        <br />
+        <div class="fees">
+          <div class="fee">
+            <div>Total(Karana)</div>
+            <div class="amount">0.01</div>
           </div>
-          <div>
+          <div class="fee">
             <div>Network Fee</div>
-            <div>0.01</div>
+            <div class="amount">0.01</div>
           </div>
-          <div>
+          <div class="fee">
             <div>Service Fee</div>
-            <div>0.01</div>
+            <div class="amount">0.01</div>
           </div>
         </div>
-        <div>
-          <div><a-button class="button-yellow">Pay With Wallet</a-button></div>
-          <div>
-            <div>
+        <br />
+        <br />
+        <div class="operation">
+          <div class="action">
+            <a-button class="button button-yellow">Pay With Wallet</a-button>
+          </div>
+          <div class="loading">
+            <a-spin v-if="loading" size="large" />
+          </div>
+          <div class="payment">
+            <div class="balance">
               <div>Balance:</div>
               <div></div>
             </div>
-            <div>
+            <div class="address">
               <div>Payment Address:</div>
               <div></div>
             </div>
@@ -177,6 +207,17 @@ class DeployError {
   name = '';
   totalSupply = '';
   mintAmount = '';
+}
+
+class MintForm {
+  tick = '';
+  amount = '';
+  repeatMint = 1
+}
+
+class MintError {
+  tick = '';
+  amount = '';
 }
 
 const type = ref('deploy');
@@ -495,6 +536,50 @@ const deploy = async function () {
     }
     .comment {
       margin: 60px;
+    }
+  }
+}
+
+.confirm-body {
+  padding: 50px 100px;
+  .title-icon {
+    text-align: center;
+    font-size: 50px;
+    line-height: 50px;
+  }
+  h1 {
+    margin: 0;
+    text-align: center;
+  }
+  .fees {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    .fee {
+      .amount {
+        color: @primaryColor;
+        font-weight: bold;
+      }
+    }
+  }
+  .operation {
+    padding: 20px;
+    background: @secondaryBackgroundColor;
+    .action {
+      text-align: center;
+      .button {
+        height: 50px;
+        width: 200px;
+      }
+    }
+    .loading {
+      height: 50px;
+    }
+    .payment {
+      font-weight: bold;
+      background: @primaryBackgroundColor;
+      border-radius: 5px;
+      padding: 25px;
     }
   }
 }
