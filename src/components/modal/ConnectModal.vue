@@ -75,6 +75,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { CheckCircleOutlined, RightCircleOutlined } from '@ant-design/icons-vue';
+import type { Context } from '@opentelemetry/api';
+
 import store from '@/store/store';
 import AccountService from '@/lib/services/account-service';
 import MetamaskService from '@/lib/services/metamask-service';
@@ -82,10 +84,12 @@ import Account from '@/lib/models/account/account';
 import AccountChain from '@/lib/models/account/account-chain';
 import type { IWallet } from '@/lib/models/wallet/wallet';
 import trace from '@/lib/utils/trace';
+import request from '@/lib/request/request';
 
 const open = defineModel('open', { default: false });
 const openStep = ref(false);
 const loading = ref(false);
+const connectAccountAddress = ref('');
 const account = ref(new Account());
 
 const connectWallet = async function (wallet: IWallet) {
@@ -102,21 +106,20 @@ const connectWallet = async function (wallet: IWallet) {
         {
           const accounts = await MetamaskService.requestAccounts({ ctx: ctx });
           console.log('request:', accounts);
-          account.value.address = accounts[0];
-          if (AccountService.getLoginAccountAddress() != accounts[0]) {
-            AccountService.setLoginAccountAddress(accounts[0]);
+          connectAccountAddress.value = accounts[0];
+          account.value.address = connectAccountAddress.value;
+          if (AccountService.getLoginAccountAddress() != connectAccountAddress.value) {
+            AccountService.setLoginAccountAddress(connectAccountAddress.value);
           }
-          const localAccount = AccountService.getLoginAccountData(accounts[0]);
+          const localAccount = AccountService.getLoginAccountData(connectAccountAddress.value);
           console.log('localAccount:', localAccount);
           if (localAccount) {
             account.value = localAccount;
-          }
-          if (account.value.hasPermission) {
+            // 设置是否有权限
             const permissions = await MetamaskService.getPermissions({ ctx: ctx });
-            if (permissions.length == 0) {
-              account.value.hasPermission = false;
-              AccountService.setLoginAccountData(account.value);
-            }
+            account.value.hasPermission = permissions.length == 0 ? false : true;
+            console.log("account:", account.value);
+            AccountService.setLoginAccountData(account.value);
           }
           open.value = false;
           openStep.value = true;
@@ -134,37 +137,37 @@ const login = async function () {
   await requestPermissions();
 };
 
-const authenticate = async function () {
-  if (account.value.publicKey == '') {
-    const span = trace.startSpan('login:authenticate');
-    span.setAttribute('account.address', account.value.address);
-    try {
-      loading.value = true;
-      const publicKey = await AccountService.getPublicKeyWithoutCache(
-        account.value.address as `0x${string}`,
-        {
-          ctx: trace.contextFromParent(span),
-        },
-      );
-      account.value.publicKey = publicKey;
-      account.value.chains[AccountService.chainNames.substrate] = new AccountChain(
-        AccountService.chainNames.substrate,
-        AccountService.getPolkadotAddress(account.value.publicKey),
-      );
-      account.value.chains[AccountService.chainNames.bitcion] = new AccountChain(
-        AccountService.chainNames.bitcion,
-        AccountService.getBitcoinAddress(account.value.publicKey),
-      );
-      AccountService.setLoginAccountData(account.value);
-    } finally {
-      loading.value = false;
-      span.end();
-    }
+const authenticate = async function (ctx?: Context) {
+  const span = trace.startSpan('login:authenticate', undefined, ctx);
+  span.setAttribute('account.address', connectAccountAddress.value);
+  try {
+    loading.value = true;
+    const publicKey = await AccountService.getPublicKeyWithoutCache(
+      connectAccountAddress.value as `0x${string}`,
+      {
+        ctx: trace.contextFromParent(span),
+      },
+    );
+    account.value.address = connectAccountAddress.value;
+    account.value.publicKey = publicKey;
+    account.value.chains[AccountService.chainNames.substrate] = new AccountChain(
+      AccountService.chainNames.substrate,
+      AccountService.getPolkadotAddress(account.value.publicKey),
+    );
+    account.value.chains[AccountService.chainNames.bitcion] = new AccountChain(
+      AccountService.chainNames.bitcion,
+      AccountService.getBitcoinAddress(account.value.publicKey),
+    );
+    AccountService.setLoginAccountData(account.value);
+  } finally {
+    loading.value = false;
+    span.end();
   }
 };
 
-const requestPermissions = async function () {
-  const span = trace.startSpan('login:requestPermissions');
+const requestPermissions = async function (ctx?: Context) {
+  await request.rpcWithPath('setAddress', 'setAddress', [account.value.publicKey], {ctx: ctx})
+  const span = trace.startSpan('login:requestPermissions', undefined, ctx);
   span.setAttribute('account.address', account.value.address);
   try {
     loading.value = true;

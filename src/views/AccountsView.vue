@@ -143,6 +143,9 @@ onMounted(async () => {
 });
 
 const changePage = async function (nextPage: number, nextPageSize: number = 10) {
+  if (!store.account?.isComplete) {
+    return
+  }
   if (loading.value) {
     return;
   }

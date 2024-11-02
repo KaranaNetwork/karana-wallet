@@ -15,7 +15,6 @@ import AccountService from './lib/services/account-service';
 (function () {
   trace.setupSDK(Config.name, Config.traceUrl);
   ConfigService.getServerInfo();
-  //ConfigService.getTransformerInfo();
   ConfigService.getNetworks();
   Web3Service.discoverWallets().then(() => {
     AccountService.getAccount().then((accounts) => {

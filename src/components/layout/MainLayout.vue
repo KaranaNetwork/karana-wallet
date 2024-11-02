@@ -6,7 +6,6 @@
         v-model:selectedKeys="state.selectedKeys"
         mode="horizontal"
         theme="dark"
-        :inline-collapsed="state.collapsed"
         :items="state.items"
         style="text-align: left; height: 100%"
         @click="jump"
