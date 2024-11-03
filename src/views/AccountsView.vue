@@ -44,14 +44,43 @@
     </div>
     <a-modal v-model:open="activityDetailOpen" :footer="null" :destroyOnClose="true" width="1000px">
       <div class="modal-body">
-        <status-view status="complete"></status-view>
+        <status-bar status="complete"></status-bar>
+        <br />
+        <fees-bar></fees-bar>
+        <br/>
+        <div class="activity-data">
+          <div class="list">
+            <div class="item">
+              <div class="title"></div>
+              <div class="value">
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+            <div class="item">
+              <div class="title"></div>
+              <div class="value">
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+            <div class="item">
+              <div class="title"></div>
+              <div class="value">
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </a-modal>
   </main-layout>
 </template>
 <script setup lang="ts">
 import MainLayout from '@/components/layout/MainLayout.vue';
-import StatusView from '@/components/step/StatusView.vue';
+import StatusBar from '@/components/activity/StatusBar.vue';
+import FeesBar from '@/components/activity/FeesBar.vue';
 import TokenGrid from '@/components/token/TokenGrid.vue';
 import ActivityTabList from '@/components/activity/ActivityTabList.vue';
 import DeployDetailModal from '@/components/modal/DeployDetailModal.vue';
@@ -265,6 +294,17 @@ const showAll = function () {
         gap: 20px;
         padding: 10px;
       }
+    }
+  }
+}
+
+.modal-body {
+  .activity-data {
+    padding: 20px;
+    background-color: @secondaryBackgroundColor;
+    .list {
+      background-color: @primaryBackgroundColor;
+      padding: 20px;
     }
   }
 }

@@ -45,6 +45,8 @@ const statusClass = computed(() => {
   background: @secondaryBackgroundColor;
   padding: 20px;
   width: 150px;
+  display: flex;
+  flex-direction: column;
   .icon-bar {
     display: flex;
     justify-content: center;
