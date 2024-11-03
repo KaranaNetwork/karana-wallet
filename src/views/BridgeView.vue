@@ -1071,16 +1071,6 @@ const down = async function () {
 
     await TransactionService.sendTransaction('Transfer', txData, { ctx: ctx });
     downStep.value = 3;
-
-    /*
-    const transformService = new TransformService({ ctx: ctx });
-    await transformService.down({
-      transformerAddress: transformerInfo.value?.list[transformIndex.value].transformer ?? '',
-      account: account,
-      amount: BalanceService.withoutAccuracy(downAmount.value),
-      tokenAssetId: transformerInfo.value?.list[transformIndex.value].omniverse ?? '',
-    });
-    */
     downAmount.value = '0';
     downStatus.value = 'finish';
     message.success('transaction success');

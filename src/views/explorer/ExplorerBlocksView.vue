@@ -99,6 +99,8 @@ function rowClick(record: IBlock, index: number) {
 </script>
 
 <style lang="less" scoped>
+@import '@/assets/css/var.less';
+
 .blocks {
   display: flex;
   flex-direction: column;

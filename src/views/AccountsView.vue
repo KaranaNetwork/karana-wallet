@@ -21,37 +21,20 @@
             <token-grid :is-self="true"></token-grid>
             <div class="want">
               Want to Deploy your own Omniverse Token,
-              <a @click="() => { router.push({path:'/inscribe'}) }">click here</a>
+              <a
+                @click="
+                  () => {
+                    router.push({ path: '/inscribe' });
+                  }
+                "
+                >click here</a
+              >
             </div>
           </a-tab-pane>
           <a-tab-pane key="activities" tab="Activities" force-render>
             <activity-tab-list></activity-tab-list>
           </a-tab-pane>
         </a-tabs>
-
-        <!-- <div class="body">
-          <div class="name" style="margin-bottom: 10px">My Tokens</div>
-          <tokens-view v-if="store.account" :is-self="true"></tokens-view>
-          <div style="margin-top: 10px">
-            <a-button class="button-default" @click="showAll">show all</a-button>
-          </div>
-          <div class="name" style="margin-bottom: 10px">Activities</div>
-          <a-card class="transaction">
-            <transaction-table :transactions="transactions"></transaction-table>
-            <a-empty v-if="transactions.length == 0 && !loading" />
-            <a-spin v-if="loading"></a-spin>
-            <br />
-            <a-pagination
-              v-model:current="page"
-              v-model:page-size="pageSize"
-              :total="total"
-              :show-total="(total: number) => `Total: ${total}`"
-              @change="changePage"
-              :show-size-changer="false"
-              show-less-items
-            />
-          </a-card>
-        </div> -->
       </template>
       <template v-else>
         <div style="display: flex; justify-content: center; align-items: end">
@@ -59,12 +42,20 @@
         </div>
       </template>
     </div>
+    <a-modal v-model:open="activityDetailOpen" :footer="null" :destroyOnClose="true" width="1000px">
+      <div class="modal-body">
+        <status-view status="complete"></status-view>
+      </div>
+    </a-modal>
   </main-layout>
 </template>
 <script setup lang="ts">
 import MainLayout from '@/components/layout/MainLayout.vue';
+import StatusView from '@/components/step/StatusView.vue';
 import TokenGrid from '@/components/token/TokenGrid.vue';
 import ActivityTabList from '@/components/activity/ActivityTabList.vue';
+import DeployDetailModal from '@/components/modal/DeployDetailModal.vue';
+
 import TokensView from '@/components/token/TokensView.vue';
 import AccountAddress from '@/components/account/AccountAddress.vue';
 import TransactionTable from '@/components/transaction/TransactionTable.vue';
@@ -94,6 +85,7 @@ const pageSize = ref(25);
 const total = ref(0);
 const loading = ref(false);
 const transactions = ref<ITransaction[]>([]);
+const activityDetailOpen = ref(true);
 
 watch(
   () => store.account,
@@ -160,6 +152,7 @@ const showAll = function () {
     display: flex;
     gap: 20px;
     align-items: center;
+    //background: @secondaryBackgroundColor;
     .avatar {
       .avatar-image {
         height: 50px;

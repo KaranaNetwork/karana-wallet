@@ -1,5 +1,10 @@
 <template>
-    <a-modal v-model:open="open">    
+    <a-modal v-model:open="open" :footer="null" :destroyOnClose="true" width="1000px">
+        <div class="modal-body">
+            <div class="status">
+
+            </div>
+        </div>
     </a-modal>
 </template>
 <script setup lang="ts">
