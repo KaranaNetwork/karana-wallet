@@ -23,11 +23,11 @@
       <div class="step-body">
         <div class="step">
           <div class="icon">
-            <template v-if="!loading || account.step > 1">
-              <RightCircleOutlined class="icon-current" v-if="account.step == 1" />
-              <CheckCircleOutlined class="icon-success" v-else-if="account.step > 1" />
+            <template v-if="!loading || step > 1">
+              <RightCircleOutlined class="icon-current" v-if="step == 1" />
+              <CheckCircleOutlined class="icon-success" v-else-if="step > 1" />
             </template>
-            <template v-else-if="account.step == 1">
+            <template v-else-if="step == 1">
               <a-spin size="large" />
             </template>
           </div>
@@ -40,11 +40,11 @@
         </div>
         <div class="step">
           <div class="icon">
-            <template v-if="!loading || account.step > 2">
-              <RightCircleOutlined class="icon-current" v-if="account.step == 2" />
-              <CheckCircleOutlined class="icon-success" v-else-if="account.step > 2" />
+            <template v-if="!loading || step > 2">
+              <RightCircleOutlined class="icon-current" v-if="step == 2" />
+              <CheckCircleOutlined class="icon-success" v-else-if="step > 2" />
             </template>
-            <template v-else-if="account.step == 2">
+            <template v-else-if="step == 2">
               <a-spin size="large" />
             </template>
           </div>
@@ -53,18 +53,18 @@
             <div class="description">Request permissions of metamask.</div>
           </div>
         </div>
-        <a-button v-if="account.step == 1" class="button-blue" @click="login" :loading="loading">
+        <a-button v-if="step == 1" class="button-blue" @click="login(1)" :loading="loading">
           Authenticate your wallet
         </a-button>
         <a-button
-          v-if="account.step == 2"
+          v-else-if="step == 2"
           class="button-blue"
-          @click="requestPermissions"
+          @click="login(2)"
           :loading="loading"
         >
           Request Permissions
         </a-button>
-        <a-button v-if="account.step == 3" class="button-blue" @click="closeStep">
+        <a-button v-if="step == 3" class="button-blue" @click="closeStep">
           Connection successful
         </a-button>
       </div>
@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { CheckCircleOutlined, RightCircleOutlined } from '@ant-design/icons-vue';
 import store from '@/store/store';
 import AccountService from '@/lib/services/account-service';
@@ -86,7 +86,21 @@ import trace from '@/lib/utils/trace';
 const open = defineModel('open', { default: false });
 const openStep = ref(false);
 const loading = ref(false);
-const account = ref(new Account());
+const account = ref<Account>(new Account());
+const address = ref<string>('');
+
+let localAccount: Account | null;
+
+const step = computed(() => {
+  let step = 1;
+  if (account.value.address != '' && account.value.publicKey != '') {
+    step = 2;
+  }
+  if (account.value.address != '' && account.value.publicKey != '' && account.value.hasPermission) {
+    step = 3;
+  }
+  return step;
+});
 
 const connectWallet = async function (wallet: IWallet) {
   if (loading.value) {
@@ -96,27 +110,19 @@ const connectWallet = async function (wallet: IWallet) {
   const ctx = trace.contextFromParent(span);
   try {
     loading.value = true;
-    account.value = new Account();
     switch (wallet.name) {
       case 'MetaMask':
         {
           const accounts = await MetamaskService.requestAccounts({ ctx: ctx });
-          console.log('request:', accounts);
-          account.value.address = accounts[0];
-          if (AccountService.getLoginAccountAddress() != accounts[0]) {
-            AccountService.setLoginAccountAddress(accounts[0]);
+          address.value = accounts[0];
+          if (AccountService.getLoginAccountAddress() != address.value) {
+            AccountService.setLoginAccountAddress(address.value);
           }
-          const localAccount = AccountService.getLoginAccountData(accounts[0]);
-          console.log('localAccount:', localAccount);
+          localAccount = AccountService.getLoginAccountData(address.value);
           if (localAccount) {
-            account.value = localAccount;
-          }
-          if (account.value.hasPermission) {
             const permissions = await MetamaskService.getPermissions({ ctx: ctx });
-            if (permissions.length == 0) {
-              account.value.hasPermission = false;
-              AccountService.setLoginAccountData(account.value);
-            }
+            localAccount.hasPermission = permissions.length > 0 ? true : false;
+            account.value = localAccount;
           }
           open.value = false;
           openStep.value = true;
@@ -129,37 +135,43 @@ const connectWallet = async function (wallet: IWallet) {
   }
 };
 
-const login = async function () {
-  await authenticate();
-  await requestPermissions();
+const login = async function (step: number = 1) {
+  if (step < 2) {
+    await authenticate();
+  }
+  if (step < 3) {
+    await requestPermissions();
+  }
+  AccountService.setLoginAccountData(account.value);
 };
 
 const authenticate = async function () {
-  if (account.value.publicKey == '') {
-    const span = trace.startSpan('login:authenticate');
-    span.setAttribute('account.address', account.value.address);
-    try {
-      loading.value = true;
-      const publicKey = await AccountService.getPublicKeyWithoutCache(
-        account.value.address as `0x${string}`,
-        {
-          ctx: trace.contextFromParent(span),
-        },
-      );
-      account.value.publicKey = publicKey;
-      account.value.chains[AccountService.chainNames.substrate] = new AccountChain(
-        AccountService.chainNames.substrate,
-        AccountService.getPolkadotAddress(account.value.publicKey),
-      );
-      account.value.chains[AccountService.chainNames.bitcion] = new AccountChain(
-        AccountService.chainNames.bitcion,
-        AccountService.getBitcoinAddress(account.value.publicKey),
-      );
-      AccountService.setLoginAccountData(account.value);
-    } finally {
-      loading.value = false;
-      span.end();
-    }
+  const span = trace.startSpan('login:authenticate');
+  if (!localAccount) {
+    account.value = new Account();
+    account.value.address = address.value;
+  }
+  span.setAttribute('account.address', address.value);
+  try {
+    loading.value = true;
+    const publicKey = await AccountService.getPublicKeyWithoutCache(
+      address.value as `0x${string}`,
+      {
+        ctx: trace.contextFromParent(span),
+      },
+    );
+    account.value.publicKey = publicKey;
+    account.value.chains[AccountService.chainNames.substrate] = new AccountChain(
+      AccountService.chainNames.substrate,
+      AccountService.getPolkadotAddress(account.value.publicKey),
+    );
+    account.value.chains[AccountService.chainNames.bitcion] = new AccountChain(
+      AccountService.chainNames.bitcion,
+      AccountService.getBitcoinAddress(account.value.publicKey),
+    );
+  } finally {
+    loading.value = false;
+    span.end();
   }
 };
 
@@ -170,8 +182,7 @@ const requestPermissions = async function () {
     loading.value = true;
     await MetamaskService.requestPermissions({ ctx: trace.contextFromParent(span) });
     account.value.hasPermission = true;
-    console.log('account.step:', account.value.step);
-    AccountService.setLoginAccountData(account.value);
+    console.log('step:', step.value);
   } finally {
     loading.value = false;
     span.end();

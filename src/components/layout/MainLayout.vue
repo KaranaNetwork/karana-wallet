@@ -11,7 +11,7 @@
         @click="jump"
       ></a-menu>
       <div class="profile">
-        <div v-if="store.account && store.account.isComplete" class="profile-account">
+        <div v-if="store.account" class="profile-account">
           <a-dropdown>
             <template #overlay>
               <div class="profile-menu">

@@ -84,7 +84,7 @@ class StoreData {
     this.isShowConnect = false;
   }
   public checkLogin(): boolean {
-    if (this.account?.isComplete) {
+    if (this.account) {
       return true;
     }
     this.isShowConnect = true;

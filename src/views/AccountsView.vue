@@ -1,7 +1,7 @@
 <template>
   <main-layout>
     <div class="container">
-      <template v-if="store.account && store.account.isComplete">
+      <template v-if="store.account && store.account">
         <div class="account-title">Account</div>
         <div class="account">
           <div class="avatar">
@@ -21,7 +21,7 @@
             <token-grid :is-self="true"></token-grid>
             <div class="want">
               Want to Deploy your own Omniverse Token,
-              <a @click="() => {}">click here</a>
+              <a @click="() => { router.push({path:'/inscribe'}) }">click here</a>
             </div>
           </a-tab-pane>
           <a-tab-pane key="activities" tab="Activities" force-render>
@@ -29,7 +29,7 @@
           </a-tab-pane>
         </a-tabs>
 
-        <div class="body">
+        <!-- <div class="body">
           <div class="name" style="margin-bottom: 10px">My Tokens</div>
           <tokens-view v-if="store.account" :is-self="true"></tokens-view>
           <div style="margin-top: 10px">
@@ -51,7 +51,7 @@
               show-less-items
             />
           </a-card>
-        </div>
+        </div> -->
       </template>
       <template v-else>
         <div style="display: flex; justify-content: center; align-items: end">
@@ -153,7 +153,7 @@ const showAll = function () {
   .account-title {
     color: @primaryColor;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 25px;
     text-align: left;
   }
   .account {

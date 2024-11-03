@@ -19,7 +19,7 @@ export default class AccountService {
   };
 
   static connect() {
-    if (!store.account?.isComplete) {
+    if (!store.account) {
       store.showConnect();
     }
   }
@@ -78,7 +78,7 @@ export default class AccountService {
         if (accounts && accounts.length > 0) {
           const accountAddress = accounts[0];
           const account = this.getLoginAccountData(accountAddress);
-          if (account && account.isComplete) {
+          if (account) {
             store.setAccount(account);
           }
         }
@@ -89,21 +89,6 @@ export default class AccountService {
     return store.account;
   }
 
-  // static async login(options?: Options): Promise<Account> {
-  //   while (this.isAccountLoading) {
-  //     await time.sleep(100);
-  //   }
-  //   try {
-  //     this.isAccountLoading = true;
-  //     const account = await MetamaskService.login(options);
-
-  //     return account;
-  //   } finally {
-  //     this.isAccountLoading = false;
-  //     console.log('account-service: login');
-  //   }
-  // }
-
   static logout() {
     localStorage.removeItem('loginAccount');
     localStorage.removeItem('account:data:' + store.account?.address);
@@ -112,7 +97,7 @@ export default class AccountService {
 
   static setLoginAccountData(account: Account) {
     localStorage.setItem('account:data:' + account.address, JSON.stringify(account));
-    if (account.isComplete) {
+    if (account) {
       store.setAccount(account);
     }
   }

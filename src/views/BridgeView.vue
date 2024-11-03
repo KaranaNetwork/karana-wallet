@@ -166,7 +166,7 @@
         </div>
         <br />
         <div
-          v-if="!store.account?.isComplete"
+          v-if="!store.account"
           style="display: flex; flex-direction: column; gap: 20px"
         >
           <a-button
@@ -686,7 +686,7 @@ let intervalRefreshEthBalance = setInterval(async () => {
 
 onMounted(async () => {
   transformerInfo.value = await transformerRequest.getTransformers();
-  if (store.account && store.account.isComplete) {
+  if (store.account) {
     await afterAccountLoaded();
   }
 });
@@ -757,7 +757,7 @@ const refreshOmniverseBalance = async function (i: number, options?: { ctx?: Con
   if (!transformerInfo.value?.list[i]) {
     return;
   }
-  if (store.account && store.account.isComplete) {
+  if (store.account) {
     const span = trace.startSpan('transform:refreshOmniverseBalance', undefined, options?.ctx);
     const ctx = trace.contextFromParent(span);
     try {
@@ -779,7 +779,7 @@ const refreshEthBalance = async function (i: number, options?: { ctx?: Context }
   if (!transformerInfo.value?.list[i]) {
     return;
   }
-  if (store.account && store.account.isComplete) {
+  if (store.account) {
     const span = trace.startSpan('transform:refreshEthBalance', undefined, options?.ctx);
     const ctx = trace.contextFromParent(span);
     try {
@@ -873,7 +873,7 @@ const calculateGasFeeDelay = async function () {
 };
 
 const calculateGasFee = async function () {
-  if (store.account?.isComplete) {
+  if (store.account) {
     if (swapType.value == 'up' && isValidAmount(upAmount.value)) {
       const transformer = new OmniverseTransformerService(
         transformerInfo.value?.list[transformIndex.value].transformerContract ?? '',
@@ -926,7 +926,7 @@ const openSearch = function (type: string) {
 
 const up = async function () {
   const account = store.account;
-  if (!account?.isComplete) {
+  if (!account) {
     return;
   }
   if (upAmount.value == '' || +upAmount.value == 0) {
@@ -1003,7 +1003,7 @@ const up = async function () {
 
 const down = async function () {
   const account = store.account;
-  if (!account?.isComplete) {
+  if (!account) {
     return;
   }
   if (downAmount.value == '' || +downAmount.value == 0) {
@@ -1119,7 +1119,7 @@ const confirmClick = async function () {
 
 const openHistory = async function () {
   const account = store.account;
-  if (!account?.isComplete) {
+  if (!account) {
     return;
   }
   isHistoryOpen.value = true;
@@ -1169,7 +1169,7 @@ const changeSettledHistory = async function (page: number, pageSize: number) {
 
 const claimAll = async function () {
   const account = store.account;
-  if (!account?.isComplete) {
+  if (!account) {
     return;
   }
   connectingAction.value = 'claim:all';
@@ -1220,7 +1220,7 @@ const claimAll = async function () {
 
 const claimOne = async function (transformingRecord: TransformRecord) {
   const account = store.account;
-  if (!account?.isComplete) {
+  if (!account) {
     return;
   }
   const transform = store.getTransform(transformingRecord.transformerId);
