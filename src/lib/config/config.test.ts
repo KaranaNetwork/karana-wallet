@@ -2,6 +2,7 @@ export default class Config {
   public static title = 'Karana Testnet';
   public static readonly name = 'test.karana.network';
   public static readonly apiUrl = '/';
+  public static readonly nextUrl = 'https://indexer.test.karana.network'
   public static readonly rpcUrl = 'https://server.test.karana.network';
   public static readonly traUrl = 'https://transformer.test.karana.network';
   public static readonly cdnUrl = 'https://omniverse-metadata.s3.amazonaws.com';

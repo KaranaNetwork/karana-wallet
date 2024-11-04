@@ -37,24 +37,37 @@
         <a-table
           class="table"
           :columns="[
-            { title: 'Transactions ID' },
-            { title: 'Token' },
-            { title: 'Quantity' },
-            { title: 'Date' },
-            { title: 'Status' },
+            { title: 'Transactions ID', dataIndex: 'assetId' },
+            { title: 'Token', dataIndex: 'name' },
+            { title: 'Quantity', dataIndex: 'mintAmount' },
+            { title: 'Date', dataIndex: 'deployTime' },
+            { title: 'Status', dataIndex: 'progress' },
           ]"
+          :dataSource="mintPageData?.list"
+          :loading="mintLoading"
         ></a-table>
       </div>
       <div v-if="activeActivity == 'deploy'">
         <a-table
           class="table"
           :columns="[
-            { title: 'Transactions ID' },
-            { title: 'Token' },
-            { title: 'Date' },
-            { title: 'Status' },
+            { title: 'Transactions ID', dataIndex: 'assetId' },
+            { title: 'Token', dataIndex: 'name' },
+            { title: 'Date', dataIndex: 'deployTime' },
+            { title: 'Status', dataIndex: 'progress' },
           ]"
-        ></a-table>
+          :dataSource="deployPageData?.list"
+          :loading="deployLoading"
+        >
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.dataIndex === 'assetId'">
+              {{ text.middleEllipsis(record.assetId, 10) }}
+            </template>
+            <template v-if="column.dataIndex === 'deployTime'">
+              {{ time.iso(record.deployTime * 1000) }}
+            </template>
+          </template>
+        </a-table>
       </div>
       <div v-if="activeActivity == 'transform'">
         <a-table
@@ -97,14 +110,59 @@
 </template>
 
 <script setup lang="ts">
-import type { title } from 'process';
 import { ref } from 'vue';
+import text from '@/lib/utils/text';
+import time from '@/lib/utils/time';
+import Config from '@/lib/config/config';
+import store from '@/store/store';
+import request from '@/lib/request/request';
+
+
 
 const activeActivity = ref('mint');
 const transactionType = ref('all');
 
-const changeActivity = function (key: string) {
+const mintPageData = ref();
+const mintLoading = ref(false);
+const deployPageData = ref();
+const deployLoading = ref(false);
+
+const changeActivity = async function (key: string) {
   activeActivity.value = key;
+  if (key == 'mint') {
+    if (!mintPageData.value) {
+      await mints();
+    }
+  } else if (key == 'deploy') {
+    if (!deployPageData.value) {
+      await deploies();
+    }
+  }
+};
+
+const deploies = async function () {
+  try {
+    deployLoading.value = true;
+    const resp = await request.get(Config.nextUrl + '/v1/token/user/list', {
+      address: store.account?.publicKey32,
+    });
+    deployPageData.value = resp.data;
+  } finally {
+    deployLoading.value = false;
+  }
+};
+
+const mints = async function () {
+  try {
+    mintLoading.value = true;
+    const resp = await request.get(Config.nextUrl + '/v1/token/mint/tx', {
+      address: store.account?.publicKey32,
+    });
+    mintPageData.value = resp.data;
+    console.log(mintPageData.value);
+  } finally {
+    mintLoading.value = false;
+  }
 };
 </script>
 
@@ -122,6 +180,11 @@ const changeActivity = function (key: string) {
     .active {
       color: @primaryColor;
       border-color: @primaryColor;
+    }
+  }
+  .activity-table {
+    .table:hover {
+      cursor: pointer;
     }
   }
 }
