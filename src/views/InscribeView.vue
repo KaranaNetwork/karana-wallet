@@ -96,6 +96,8 @@
               {{ mintError.tick }}
             </div>
           </div>
+          <br />
+          <br />
           <div class="row">
             <div class="col label">Amount</div>
             <div class="col">
@@ -114,15 +116,21 @@
               {{ mintError.amount }}
             </div>
           </div>
-          <div class="row">
-            <div class="repeat-mint">
-              <div class="name"></div>
-              <div class="slider">
-                <a-slider v-model:value="mintForm.repeatMint" :min="1" :max="20" />
-              </div>
-              <div class="action"></div>
+          <br />
+          <br />
+          <div class="row repeat-mint">
+            <div class="col label">Repeat Mint</div>
+            <div class="col input">
+              <a-slider class="slider" v-model:value="mintForm.repeatMint" :min="1" :max="20" />
+              <a-input-number
+                class="slider-number"
+                v-model:value="mintForm.repeatMint"
+              ></a-input-number>
+              <a-button class="button-yellow action">Max 10</a-button>
             </div>
           </div>
+          <br/>
+          <br/>
         </template>
         <div class="row">
           <div class="col label"></div>
@@ -151,7 +159,7 @@
         <div class="row">
           <div class="col label"></div>
           <div class="col action">
-            <a-button class="button-yellow" @click="openConfirm">Submit & Pay invoice</a-button>
+            <a-button class="button-yellow button-submit" @click="openConfirm">Submit & Pay invoice</a-button>
           </div>
         </div>
       </div>
@@ -525,7 +533,7 @@ const deploy = async function () {
           height: 50px;
           border: 1px solid gray;
         }
-        .button-yellow {
+        .button-submit {
           height: 50px;
           flex-grow: 1;
         }
@@ -564,6 +572,20 @@ const deploy = async function () {
         font-size: 14px;
         font-weight: normal;
         color: #facd91;
+      }
+    }
+    .repeat-mint {
+      .input {
+        display: flex;
+        gap: 10px;
+        padding: 5px 10px;
+        background: @secondaryBackgroundColor;
+        .slider {
+          flex-grow: 1;
+        }
+        .action {
+          height: 30px;
+        }
       }
     }
     .comment {
