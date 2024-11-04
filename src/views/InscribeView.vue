@@ -82,8 +82,8 @@
             <div class="col label">Tick</div>
             <div class="col">
               <a-input
-                v-model:value="deployForm.name"
-                @change="changeDeployName"
+                v-model:value="mintForm.tick"
+                @change="changeMintName"
                 class="text-field"
                 placeholder='2-8 characters like "ab" ...'
               >
@@ -93,7 +93,34 @@
           <div class="row">
             <div class="col label"></div>
             <div class="col error">
-              {{ deployError.name }}
+              {{ mintError.tick }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col label">Amount</div>
+            <div class="col">
+              <a-input
+                v-model:value="mintForm.amount"
+                @change="changeMintAmount"
+                class="text-field"
+                placeholder="mint amount"
+              >
+              </a-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col label"></div>
+            <div class="col error">
+              {{ mintError.amount }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="repeat-mint">
+              <div class="name"></div>
+              <div class="slider">
+                <a-slider v-model:value="mintForm.repeatMint" :min="1" :max="20" />
+              </div>
+              <div class="action"></div>
             </div>
           </div>
         </template>
@@ -212,7 +239,7 @@ class DeployError {
 class MintForm {
   tick = '';
   amount = '';
-  repeatMint = 1
+  repeatMint = 1;
 }
 
 class MintError {
@@ -234,6 +261,8 @@ const loading = ref(false);
 const amount = ref('0');
 const deployForm = ref(new DeployForm());
 const deployError = ref(new DeployError());
+const mintForm = ref(new MintForm());
+const mintError = ref(new MintError());
 
 const checkDeployError = function (checks: string[] = ['name', 'totalSupply', 'mintAmount']) {
   if (checks.indexOf('name') >= 0) {
@@ -306,6 +335,9 @@ const changeDeployMintAmount = function (e: InputEvent) {
   e.target.value = deployForm.value.mintAmount;
   checkDeployError(['mintAmount']);
 };
+
+const changeMintName = function (e: InputEvent) {};
+const changeMintAmount = function (e: InputEvent) {};
 
 const openConfirm = function () {
   isConfirmOpen.value = true;
