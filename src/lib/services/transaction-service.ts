@@ -3,6 +3,7 @@ import objectUtil from '@/lib/utils/object';
 import request, { type Options } from '@/lib/request/request';
 import SignService from '@/lib/services/sign-service';
 import type { IInput, IOutput, ITransfer } from '@/lib/models/transaction/transaction';
+import Config from '../config/config';
 
 export default class TransactionService {
   static async deploy(
@@ -26,7 +27,11 @@ export default class TransactionService {
       mintAmount: data.mintAmount,
       salt: data.salt,
     };
-    const preDeployData = await request.rpc('preDeploy', [metadata], options);
+    const preDeployData = await request.post(
+      Config.nextUrl + '/v1/token/preDeploy',
+      metadata,
+      options,
+    );
     objectUtil.removeNull(preDeployData);
     console.log('preDeploy:', preDeployData);
 
@@ -37,16 +42,14 @@ export default class TransactionService {
       ...objectUtil.snakeCaseKeys(preDeployData),
     });
     console.log('deploy sign: ', sign);
-    const result = await request.rpc(
-      'sendTransaction',
-      [
-        {
-          type: 'Deploy',
-          metadata: metadata,
-          signature: sign,
-          ...preDeployData,
-        },
-      ],
+    const result = await request.post(
+      Config.nextUrl + '/v1/token/deploy',
+      {
+        type: 'Deploy',
+        metadata: metadata,
+        signature: sign,
+        ...preDeployData,
+      },
       options,
     );
     console.log('deploy: ', result);

@@ -129,8 +129,8 @@
               <a-button class="button-yellow action">Max 10</a-button>
             </div>
           </div>
-          <br/>
-          <br/>
+          <br />
+          <br />
         </template>
         <div class="row">
           <div class="col label"></div>
@@ -138,11 +138,11 @@
             <div class="fees">
               <div class="fee">
                 <div class="fee-type">Network Fee:</div>
-                <div class="fee-value">0.01 karana</div>
+                <div class="fee-value">{{ feeData.networkFee }} karana</div>
               </div>
               <div class="fee">
                 <div class="fee-type">ServiceFee:</div>
-                <div class="fee-value">0</div>
+                <div class="fee-value">{{ feeData.serviceFee }}</div>
               </div>
               <a-divider class="divider" />
               <div class="total">
@@ -159,7 +159,9 @@
         <div class="row">
           <div class="col label"></div>
           <div class="col action">
-            <a-button class="button-yellow button-submit" @click="openConfirm">Submit & Pay invoice</a-button>
+            <a-button class="button-yellow button-submit" @click="openConfirm"
+              >Submit & Pay invoice</a-button
+            >
           </div>
         </div>
       </div>
@@ -192,7 +194,7 @@
         <br />
         <div class="operation">
           <div class="action">
-            <a-button class="button button-yellow">Pay With Wallet</a-button>
+            <a-button class="button button-yellow" @click="confirm">Pay With Wallet</a-button>
           </div>
           <div class="loading">
             <a-spin v-if="loading" size="large" />
@@ -217,7 +219,7 @@
 import MainLayout from '@/components/layout/MainLayout.vue';
 import { ClockCircleOutlined } from '@ant-design/icons-vue';
 import _ from 'lodash';
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { message } from 'ant-design-vue';
 
 import store from '@/store/store';
@@ -230,6 +232,7 @@ import TransactionService from '@/lib/services/transaction-service';
 import EditMedia from '@/lib/models/media/edit-media';
 import type { IToken } from '@/lib/models/token/token';
 import BalanceService from '@/lib/services/balance-service';
+import Config from '@/lib/config/config';
 
 class DeployForm {
   name = '';
@@ -242,6 +245,12 @@ class DeployError {
   name = '';
   totalSupply = '';
   mintAmount = '';
+  get ok() {
+    if (this.name == '' && this.totalSupply == '' && this.mintAmount == '') {
+      return true;
+    }
+    return false;
+  }
 }
 
 class MintForm {
@@ -262,7 +271,6 @@ const isConfirmOpen = ref(false);
 
 // const showAvatarCropper = ref(false);
 
-const avatarEditMedia = ref(new EditMedia());
 // const avatarUrl = ref('');
 const buttonLoading = ref(false);
 const loading = ref(false);
@@ -271,6 +279,33 @@ const deployForm = ref(new DeployForm());
 const deployError = ref(new DeployError());
 const mintForm = ref(new MintForm());
 const mintError = ref(new MintError());
+
+const deployFeeData = ref({
+  networkFee: '',
+  serviceFee: '',
+});
+
+const mintFeeData = ref({
+  networkFee: '',
+  serviceFee: '',
+});
+
+const feeData = computed(() => {
+  return type.value == 'deploy' ? deployFeeData.value : mintFeeData.value;
+});
+
+onMounted(async () => {
+  (async function () {
+    const resp = await request.get(Config.nextUrl + '/v1/token/deploy/fee');
+    deployFeeData.value.networkFee = _.get(resp, 'data', 'networkFee');
+    deployFeeData.value.serviceFee = _.get(resp, 'data', 'serviceFee');
+  })();
+  (async function () {
+    const resp = await request.get(Config.nextUrl + '/v1/token/mint/fee');
+    mintFeeData.value.networkFee = _.get(resp, 'data', 'networkFee');
+    mintFeeData.value.serviceFee = _.get(resp, 'data', 'serviceFee');
+  })();
+});
 
 const checkDeployError = function (checks: string[] = ['name', 'totalSupply', 'mintAmount']) {
   if (checks.indexOf('name') >= 0) {
@@ -304,6 +339,7 @@ const checkDeployError = function (checks: string[] = ['name', 'totalSupply', 'm
       deployError.value.mintAmount = '';
     }
   }
+  return deployError.value.ok;
 };
 
 const changeDeployName = function (e: InputEvent) {
@@ -348,7 +384,26 @@ const changeMintName = function (e: InputEvent) {};
 const changeMintAmount = function (e: InputEvent) {};
 
 const openConfirm = function () {
-  isConfirmOpen.value = true;
+  if (!store.checkLogin()) {
+    return;
+  }
+  if (type.value == 'deploy') {
+    const ok = checkDeployError();
+    console.log('ok: ', ok);
+    if (ok) {
+      isConfirmOpen.value = true;
+    }
+  }
+};
+
+const confirm = function () {
+  if (!store.checkLogin()) {
+    return;
+  }
+  if (type.value == 'deploy') {
+    console.log('deploy')
+    deploy();
+  }
 };
 
 // const changeToken = function (value: IToken) {
@@ -439,10 +494,6 @@ const deploy = async function () {
   }
   loading.value = true;
   try {
-    if (avatarEditMedia.value.editSrc != '') {
-      avatarEditMedia.value.path = 'upload/token/avatar/' + deployForm.value.name;
-      await request.uploadEditMedia(avatarEditMedia.value);
-    }
     const chainId = (await ConfigService.getServerInfo()).eip712.chainId;
     const currentChainId = await MetamaskService.ethChainId();
     if (currentChainId != chainId) {
