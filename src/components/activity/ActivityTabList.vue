@@ -143,10 +143,10 @@ const changeActivity = async function (key: string) {
 const deploies = async function () {
   try {
     deployLoading.value = true;
-    const resp = await request.get(Config.nextUrl + '/v1/token/user/list', {
+    const data = await request.get(Config.nextUrl + '/v1/token/user/list', {
       address: store.account?.publicKey32,
     });
-    deployPageData.value = resp.data;
+    deployPageData.value = data;
   } finally {
     deployLoading.value = false;
   }
@@ -155,10 +155,10 @@ const deploies = async function () {
 const mints = async function () {
   try {
     mintLoading.value = true;
-    const resp = await request.get(Config.nextUrl + '/v1/token/mint/tx', {
+    const data = await request.get(Config.nextUrl + '/v1/token/mint/tx', {
       address: store.account?.publicKey32,
     });
-    mintPageData.value = resp.data;
+    mintPageData.value = data;
     console.log(mintPageData.value);
   } finally {
     mintLoading.value = false;

@@ -124,6 +124,19 @@ class Request {
         data: data,
         url: url,
       });
+      if (_.has(response, ['data', 'code'])) {
+        if (_.get(response, ['data', 'code']) == 0) {
+          return _.get(response, ['data', 'data']);
+        } else {
+          throw new AxiosError(
+            _.get(response, ['data', 'message']),
+            _.get(response, ['data', 'code']),
+            undefined,
+            undefined,
+            response,
+          );
+        }
+      }
       return response.data;
     } catch (e: unknown) {
       if (isAlert) {

@@ -6,6 +6,9 @@ import decimalUtil from '@/lib/utils/decimal';
 
 export default class BalanceService {
   static humanLize(balance: Decimal.Value, decimals?: number) {
+    if (!balance) {
+      return '';
+    }
     if (!decimals) {
       decimals = store.serverInfo?.assets.decimals ?? 12;
     }
@@ -34,19 +37,24 @@ export default class BalanceService {
 
   //将带精度的转换为不带精度的
   static withoutAccuracy(balance: Decimal.Value, decimals?: number) {
+    if (balance == '') {
+      return '';
+    }
     if (!decimals) {
       decimals = store.serverInfo?.assets.decimals ?? 12;
     }
     const a = decimalUtil.mul(balance, 10 ** decimals);
     if (decimalUtil.compareTo(0, a) == 0) {
-      return '0';   
-      
+      return '0';
     }
     return a.toFixed(0, Decimal.ROUND_FLOOR);
   }
 
   //不带带精度的转换为带精度的
   static withAccuracy(balance: Decimal.Value, decimals?: number) {
+    if (balance == '') {
+      return '';
+    }
     if (!decimals) {
       decimals = store.serverInfo?.assets.decimals ?? 12;
     }
@@ -58,6 +66,9 @@ export default class BalanceService {
   }
 
   static convertToMinUnit(balance: Decimal.Value, decimals?: number): string {
+    if (balance == '') {
+      return '';
+    }
     if (!decimals) {
       decimals = store.serverInfo?.assets.decimals ?? 12;
     }

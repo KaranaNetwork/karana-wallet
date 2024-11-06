@@ -76,6 +76,21 @@ class TimeUtil {
       }, n);
     });
   }
+
+  public formatTime(seconds: number): string {
+    // 计算小时、分钟、秒
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+  
+    // 格式化成两位数的字符串
+    const hoursStr = hours > 0 ? String(hours).padStart(2, '0') : '';
+    const minutesStr = String(minutes).padStart(2, '0');
+    const secondsStr = String(secs).padStart(2, '0');
+  
+    // 判断是否显示小时部分
+    return hoursStr ? `${hoursStr}:${minutesStr}:${secondsStr}` : `${minutesStr}:${secondsStr}`;
+  }
 }
 
 export default new TimeUtil();

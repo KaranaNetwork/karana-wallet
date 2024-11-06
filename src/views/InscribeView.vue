@@ -81,13 +81,82 @@
           <div class="row">
             <div class="col label">Tick</div>
             <div class="col">
-              <a-input
-                v-model:value="mintForm.tick"
-                @change="changeMintName"
-                class="text-field"
-                placeholder='2-8 characters like "ab" ...'
+              <a-dropdown :open="dropDownOpen" class="dropdown">
+                <a-input
+                  v-model:value="mintForm.tick"
+                  class="text-field"
+                  placeholder="2-8 characters like 'ab' ..."
+                  @change="mintSearch"
+                  @blur="console.log(mintDropdownClose)"
+                >
+                </a-input>
+                <template #overlay>
+                  <div class="overlay">
+                    <div
+                      v-for="(token, i) in tokens"
+                      :key="i"
+                      @click.stop="mintSelect(i)"
+                      class="token-item"
+                    >
+                      <div class="name">{{ token.tokenName }}</div>
+                      <div class="detail">
+                        <div class="left">
+                          <div class="col row">
+                            <div class="col">Supply:</div>
+                            <div class="col">{{ BalanceService.humanLize(token.totalSupply) }}</div>
+                          </div>
+                          <div class="col row">
+                            <div class="col">Limit Per Mint:</div>
+                            <div class="col">{{ BalanceService.humanLize(token.mintAmount) }}</div>
+                          </div>
+                        </div>
+                        <div class="right">
+                          <div class="col row">
+                            <div class="col">Minted:</div>
+                            <div class="col">
+                              {{ BalanceService.humanLize(token.currentSupply) }}
+                            </div>
+                          </div>
+                          <div class="col row">
+                            <div class="col">Holders:</div>
+                            <div class="col">{{ token.holderCount }}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </a-dropdown>
+              <!--
+              <a-select
+                :searchValue="mintForm.tick"
+                :open="dropDownOpen"
+                class="select"
+                showSearch
+                option-label-prop="label"
+                placeholder="2-8 characters like 'ab' ..."
+                :auto-clear-search-value="false"
+                @input="mintSearch"
+                @blur="mintDropdownClose"
               >
-              </a-input>
+                <template v-for="(token, i) in tokens" :key="i">
+                  <a-select-option :value="token.assetId" :label="token.tokenName">
+                    <div @click.stop="mintSelect(i)">
+                      <div>{{ token.tokenName }}</div>
+                      <div class="detail">
+                        <div class="left">
+                          <div>Supply:</div>
+                          <div>{{ token.totalSupply }}</div>
+                        </div>
+                        <div class="right">
+                          <div>Supply:</div>
+                          <div>{{ token.totalSupply }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </a-select-option>
+                </template>
+              </a-select>-->
             </div>
           </div>
           <div class="row">
@@ -138,16 +207,26 @@
             <div class="fees">
               <div class="fee">
                 <div class="fee-type">Network Fee:</div>
-                <div class="fee-value">{{ feeData.networkFee }} karana</div>
+                <div class="fee-value">
+                  {{ BalanceService.humanLize(feeData.networkFee) }}
+                  karana
+                </div>
               </div>
               <div class="fee">
                 <div class="fee-type">ServiceFee:</div>
-                <div class="fee-value">{{ feeData.serviceFee }}</div>
+                <div class="fee-value">
+                  {{ BalanceService.humanLize(feeData.serviceFee) }}
+                </div>
               </div>
               <a-divider class="divider" />
               <div class="total">
                 <div class="fee-type">Total:</div>
-                <div class="fee-value">0.01 karana</div>
+                <div class="fee-value">
+                  {{
+                    BalanceService.humanLize(decimal.add(feeData.serviceFee, feeData.networkFee))
+                  }}
+                  karana
+                </div>
               </div>
             </div>
           </div>
@@ -172,22 +251,24 @@
         <div class="title-icon">
           <ClockCircleOutlined />
         </div>
-        <h1>Waiting on Payment in xxxxxx</h1>
+        <h1>Waiting on Payment in {{ time.formatTime(timeLeft) }}</h1>
         <br />
         <br />
         <br />
         <div class="fees">
           <div class="fee">
             <div>Total(Karana)</div>
-            <div class="amount">0.01</div>
+            <div class="amount">
+              {{ BalanceService.humanLize(decimal.add(feeData.serviceFee, feeData.networkFee)) }}
+            </div>
           </div>
           <div class="fee">
             <div>Network Fee</div>
-            <div class="amount">0.01</div>
+            <div class="amount">{{ BalanceService.humanLize(feeData.networkFee) }}</div>
           </div>
           <div class="fee">
             <div>Service Fee</div>
-            <div class="amount">0.01</div>
+            <div class="amount">{{ BalanceService.humanLize(feeData.serviceFee) }}</div>
           </div>
         </div>
         <br />
@@ -197,16 +278,16 @@
             <a-button class="button button-yellow" @click="confirm">Pay With Wallet</a-button>
           </div>
           <div class="loading">
-            <a-spin v-if="loading" size="large" />
+            <loading-icon v-if="loading" class="icon"></loading-icon>
           </div>
           <div class="payment">
             <div class="balance">
               <div>Balance:</div>
-              <div></div>
+              <div>{{ balance == '' ? '' : BalanceService.humanLize(balance) }}</div>
             </div>
             <div class="address">
               <div>Payment Address:</div>
-              <div></div>
+              <div>{{ paymentAddress }}</div>
             </div>
           </div>
         </div>
@@ -217,22 +298,26 @@
 
 <script setup lang="ts">
 import MainLayout from '@/components/layout/MainLayout.vue';
-import { ClockCircleOutlined } from '@ant-design/icons-vue';
-import _ from 'lodash';
-import { ref, onMounted, computed } from 'vue';
-import { message } from 'ant-design-vue';
+import LoadingIcon from '@/components/basic/icon/LoadingIcon.vue';
+import { ClockCircleOutlined, SearchOutlined } from '@ant-design/icons-vue';
 
+import _ from 'lodash';
+import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
+import { message } from 'ant-design-vue';
 import store from '@/store/store';
 import hex from '@/lib/utils/hex';
 import decimal from '@/lib/utils/decimal';
+import time from '@/lib/utils/time';
+import Config from '@/lib/config/config';
 import request from '@/lib/request/request';
 import ConfigService from '@/lib/services/config-service';
 import MetamaskService from '@/lib/services/metamask-service';
 import TransactionService from '@/lib/services/transaction-service';
-import EditMedia from '@/lib/models/media/edit-media';
-import type { IToken } from '@/lib/models/token/token';
 import BalanceService from '@/lib/services/balance-service';
-import Config from '@/lib/config/config';
+import type { IToken } from '@/lib/models/token/token';
+import { createModels } from '@/lib/models/model';
+import Token from '@/lib/models/token/token';
+import Decimal from 'decimal.js';
 
 class DeployForm {
   name = '';
@@ -254,7 +339,9 @@ class DeployError {
 }
 
 class MintForm {
+  token: Token | null = null;
   tick = '';
+  assetId = '';
   amount = '';
   repeatMint = 1;
 }
@@ -262,23 +349,26 @@ class MintForm {
 class MintError {
   tick = '';
   amount = '';
+  get ok() {
+    if (this.tick == '' && this.amount == '') {
+      return true;
+    }
+    return false;
+  }
 }
 
 const type = ref('deploy');
 const visible = defineModel('visible', { default: false });
-// const token = defineModel('token', { type: Object as PropType<IToken> });
 const isConfirmOpen = ref(false);
-
-// const showAvatarCropper = ref(false);
-
-// const avatarUrl = ref('');
 const buttonLoading = ref(false);
 const loading = ref(false);
-const amount = ref('0');
 const deployForm = ref(new DeployForm());
 const deployError = ref(new DeployError());
 const mintForm = ref(new MintForm());
 const mintError = ref(new MintError());
+const tokens = ref<Token[]>([]);
+const searchValue = ref<string>('');
+const dropDownOpen = ref(false);
 
 const deployFeeData = ref({
   networkFee: '',
@@ -290,22 +380,43 @@ const mintFeeData = ref({
   serviceFee: '',
 });
 
+const balance = ref('');
+const paymentAddress = ref('');
+
 const feeData = computed(() => {
   return type.value == 'deploy' ? deployFeeData.value : mintFeeData.value;
 });
 
+const timeLeft = ref(7200);
+
+let interval: any;
+
 onMounted(async () => {
-  (async function () {
-    const resp = await request.get(Config.nextUrl + '/v1/token/deploy/fee');
-    deployFeeData.value.networkFee = _.get(resp, 'data', 'networkFee');
-    deployFeeData.value.serviceFee = _.get(resp, 'data', 'serviceFee');
-  })();
-  (async function () {
-    const resp = await request.get(Config.nextUrl + '/v1/token/mint/fee');
-    mintFeeData.value.networkFee = _.get(resp, 'data', 'networkFee');
-    mintFeeData.value.serviceFee = _.get(resp, 'data', 'serviceFee');
-  })();
+  interval = setInterval(() => {
+    if (timeLeft.value > 0) {
+      timeLeft.value--;
+    }
+  }, 1000);
+  console.log('mounted');
 });
+
+onUnmounted(async () => {
+  clearInterval(interval);
+});
+
+const fetchDeployFee = async function () {
+  const data = await request.get(Config.nextUrl + '/v1/token/deploy/fee', { tokenName: 'abcd' });
+  deployFeeData.value.networkFee = _.get(data, ['networkFee']);
+  deployFeeData.value.serviceFee = _.get(data, ['serviceFee']);
+};
+
+const fetchMintFee = async function (assetId: string) {
+  const data = await request.get(Config.nextUrl + '/v1/token/mint/fee', { assetId: assetId });
+  mintFeeData.value.networkFee = _.get(data, ['networkFee']);
+  console.log(mintFeeData.value.networkFee);
+  console.log(feeData.value.networkFee);
+  mintFeeData.value.serviceFee = _.get(data, ['serviceFee']);
+};
 
 const checkDeployError = function (checks: string[] = ['name', 'totalSupply', 'mintAmount']) {
   if (checks.indexOf('name') >= 0) {
@@ -342,15 +453,16 @@ const checkDeployError = function (checks: string[] = ['name', 'totalSupply', 'm
   return deployError.value.ok;
 };
 
-const changeDeployName = function (e: InputEvent) {
+const changeDeployName = async function (e: InputEvent) {
   if (deployForm.value.name.length > 8) {
     deployForm.value.name = deployForm.value.name.substring(0, 8);
     //@ts-ignore
     e.target.value = deployForm.value.name;
     return;
   }
-
   checkDeployError(['name']);
+  await fetchDeployFee();
+  console.log(feeData.value);
 };
 
 const changeDeployTotalSupply = function (e: InputEvent) {
@@ -380,29 +492,83 @@ const changeDeployMintAmount = function (e: InputEvent) {
   checkDeployError(['mintAmount']);
 };
 
-const changeMintName = function (e: InputEvent) {};
+const checkMintError = function (checks: string[] = ['']) {
+  if (checks.indexOf('amount') >= 0) {
+    if (mintForm.value.amount == '' || +mintForm.value.amount == 0) {
+      mintForm.value.amount = 'Amount is required';
+    } else if (
+      mintForm.value.token &&
+      decimal.compareTo(mintForm.value.amount, mintForm.value.token.price) > 0
+    ) {
+      mintForm.value.amount = 'amount cannot be greater than the limit';
+    } else {
+      deployError.value.totalSupply = '';
+    }
+  }
+  return mintError.value.ok;
+};
+
+const mintSearch = async function (e: InputEvent) {
+  //@ts-ignore
+  const value = e.target.value;
+  mintForm.value.tick = value;
+  const tokenName = value;
+  const data = await request.get(Config.nextUrl + '/v1/token', { tokenName: tokenName });
+  tokens.value = createModels(Token, _.get(data, 'list') as unknown as object[]);
+  dropDownOpen.value = true;
+};
+
+const mintDropdownClose = async function (e: Event) {
+  dropDownOpen.value = false;
+};
+
+const mintSelect = async function (i: number) {
+  const token = tokens.value[i];
+  mintForm.value.tick = token.tokenName;
+  mintForm.value.assetId = token.assetId;
+  mintForm.value.token = token;
+  dropDownOpen.value = false;
+  await fetchMintFee(token.assetId);
+};
+
 const changeMintAmount = function (e: InputEvent) {};
 
-const openConfirm = function () {
+const openConfirm = async function () {
   if (!store.checkLogin()) {
     return;
+  }
+  timeLeft.value = 7200;
+  const serverInfo = await ConfigService.getServerInfo();
+  if (store.account) {
+    balance.value = await request.balanceOf(serverInfo.fee.assetId, store.account.publicKey32);
   }
   if (type.value == 'deploy') {
     const ok = checkDeployError();
-    console.log('ok: ', ok);
     if (ok) {
       isConfirmOpen.value = true;
     }
+    paymentAddress.value = serverInfo.fee.receiver ?? '';
+  } else if (type.value == 'mint') {
+    const ok = checkMintError();
+    if (ok) {
+      isConfirmOpen.value = true;
+    }
+    paymentAddress.value = mintForm.value.token?.assetId ?? '';
   }
 };
 
-const confirm = function () {
+const confirm = async function () {
   if (!store.checkLogin()) {
     return;
   }
   if (type.value == 'deploy') {
-    console.log('deploy')
-    deploy();
+    await deploy();
+    isConfirmOpen.value = false;
+  } else if (type.value == 'mint') {
+    if (mintForm.value.token) {
+      await mint(mintForm.value.token);
+    }
+    isConfirmOpen.value = false;
   }
 };
 
@@ -431,7 +597,7 @@ const confirm = function () {
 //   console.log('avatarEditMedia:', avatarEditMedia.value);
 // };
 
-const mint = async function (token: IToken) {
+const mint = async function (token: Token) {
   if (buttonLoading.value) {
     return;
   }
@@ -446,7 +612,7 @@ const mint = async function (token: IToken) {
         message.error(_.get(e, 'message'));
       }
     }
-    const amountk = BalanceService.withoutAccuracy(amount.value);
+    const amount = BalanceService.withoutAccuracy(mintForm.value.amount);
     await TransactionService.mint({
       account: store.account?.address ?? '',
       chainId: chainId,
@@ -454,7 +620,7 @@ const mint = async function (token: IToken) {
       assetId: token.assetId,
       outputs: [
         {
-          amount: amountk,
+          amount: amount,
           //trim0x
           address: store.account?.publicKey32 ?? '',
         },
@@ -535,14 +701,6 @@ const deploy = async function () {
   }
   visible.value = false;
 };
-
-// const submit = async function () {
-//   if (type.value == 'mint' && token.value) {
-//     await mint(token.value);
-//   } else if (type.value == 'deploy') {
-//     await deploy();
-//   }
-// };
 </script>
 
 <style lang="less" scoped>
@@ -583,6 +741,19 @@ const deploy = async function () {
         .text-field {
           height: 50px;
           border: 1px solid gray;
+        }
+
+        .select {
+          flex-grow: 1;
+        }
+        .select:deep(.ant-select-selector) {
+          height: 50px;
+          color: white;
+          background: @secondaryBackgroundColor;
+          border-color: gray;
+          .ant-select-selection-search-input {
+            height: 48px;
+          }
         }
         .button-submit {
           height: 50px;
@@ -645,6 +816,36 @@ const deploy = async function () {
   }
 }
 
+.overlay {
+  background: @secondaryBackgroundColor;
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+  max-height: 600px;
+  overflow-y: auto;
+  cursor: pointer;
+  .token-item {
+    padding: 10px;
+    .name {
+      font-size: 20px;
+    }
+    .detail {
+      display: flex;
+      justify-content: space-between;
+      .left,
+      .right {
+        flex-grow: 1;
+        .row {
+          display: flex;
+        }
+      }
+    }
+  }
+  .token-item:hover {
+    background: @primaryBackgroundColor;
+  }
+}
+
 .confirm-body {
   padding: 50px 100px;
   .title-icon {
@@ -671,6 +872,7 @@ const deploy = async function () {
     padding: 20px;
     background: @secondaryBackgroundColor;
     .action {
+      margin-top: 40px;
       text-align: center;
       .button {
         height: 50px;
@@ -678,13 +880,25 @@ const deploy = async function () {
       }
     }
     .loading {
+      margin-top: 10px;
       height: 50px;
+      display: flex;
+      justify-content: center;
+      .icon {
+        color: @primaryColor;
+      }
     }
     .payment {
+      margin-top: 10px;
       font-weight: bold;
       background: @primaryBackgroundColor;
       border-radius: 5px;
       padding: 25px;
+      .balance,
+      .address {
+        display: flex;
+        justify-content: space-between;
+      }
     }
   }
 }
